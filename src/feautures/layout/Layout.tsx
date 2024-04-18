@@ -1,16 +1,18 @@
 import { Outlet } from "react-router-dom";
 
+import './Layout.css';
+import { WithAuthorizedHeader } from "./Header";
+
+
 export function Layout({ children }: { children?: React.ReactNode }) {
     return (
         <>
-            <header>
-                Wishlist
-            </header>
+            <WithAuthorizedHeader />
             <main>
                 <Outlet />
             </main>
             <footer>
-                @jijumbecks
+                @jijumbeck
             </footer>
         </>
     )
