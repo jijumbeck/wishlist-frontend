@@ -2,6 +2,9 @@ import {
     createBrowserRouter,
 } from "react-router-dom";
 import { Layout } from "../feautures/layout/Layout";
+import { AuthWidget } from "../feautures/auth/ui/AuthWidget";
+import { LoginForm } from "../feautures/auth/ui/LoginForm";
+import { RegisterForm } from "../feautures/auth/ui/RegisterForm";
 
 export const router = createBrowserRouter([
     {
@@ -18,7 +21,15 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/login',
-                element: <div>Auth</div>
+                element: <AuthWidget>
+                    <LoginForm />
+                </AuthWidget>
+            },
+            {
+                path: '/register',
+                element: <AuthWidget>
+                    <RegisterForm />
+                </AuthWidget>
             },
             {
                 path: "/settings",
