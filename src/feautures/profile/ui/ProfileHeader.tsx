@@ -1,5 +1,6 @@
+import { FriendProfileComponent } from "../../friends/ui/FriendProfileComponent";
 import { UserInfo } from "../profile.dto";
-import { ProfileFriendButton } from "./ProfileFriendButton";
+import { ProfileHeaderButton } from "./ProfileHeaderButton";
 
 export function ProfileHeader({ user }: { user: UserInfo }) {
     return (
@@ -26,10 +27,8 @@ export function ProfileHeader({ user }: { user: UserInfo }) {
             }}>
                 <h3 style={{ margin: 0 }}>@{user?.login}</h3>
                 <h5 style={{ margin: 0 }}>{user?.name} {user?.lastName}</h5>
-                <div>
-                    Friend Component
-                </div>
-                <ProfileFriendButton />
+                <FriendProfileComponent userId={user.id} />
+                <ProfileHeaderButton user={user} />
             </div>
         </div>
     )

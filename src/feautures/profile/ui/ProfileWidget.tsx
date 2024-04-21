@@ -24,7 +24,7 @@ export function ProfileWidget() {
     const user = useGetUserInfo(userId).data;
 
 
-    if (!user) {
+    if (!user || !currentUser) {
         return (<p>Загрузка...</p>)
     }
 
@@ -37,7 +37,7 @@ export function ProfileWidget() {
             width: '50%',
             margin: '50px auto'
         }}>
-            <UserRelationStatusContext.Provider value={UserRelationStatus.Me}>
+            <UserRelationStatusContext.Provider value={userId === currentUser.id ? UserRelationStatus.Me : UserRelationStatus.None}>
                 <ProfileHeader user={user} />
                 <hr style={{ border: '1px solid', width: '100%' }} />
                 <Outlet />
