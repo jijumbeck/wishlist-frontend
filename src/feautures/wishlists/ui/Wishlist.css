@@ -1,0 +1,33 @@
+.wishlist-card {
+    height: 300px;
+    width: 200px;
+
+    background: linear-gradient(45deg, #505fff, 60%, #ff7171),
+        linear-gradient(white, transparent);
+    border-radius: 25px;
+}
+
+.wishlist-card:hover {
+    cursor: pointer;
+}
+
+.wishlist-card__paper {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 17px;
+    background-color: #ffffffaf;
+
+    height: calc(100% - 20px);
+}
+
+.wishlist-card__paper:hover {
+    background-color: #ffffffe3;
+}
+
+.wishlist-card h4 {
+    margin: 0;
+    font-size: 24px;
+    color: #994ea0;
+
+    text-align: left;
+}
