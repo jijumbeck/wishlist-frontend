@@ -6,6 +6,7 @@ import { CreateWishlistButton, WishlistPreview } from "./WishlistPreview";
 
 export function WishlistListWidget() {
     const userId = useLoaderData() as string;
+    console.log(userId);
     const { data } = useGetWishlists(userId);
 
     const userRelationStatus = useContext(UserRelationStatusContext);

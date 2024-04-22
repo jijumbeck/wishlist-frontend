@@ -45,7 +45,8 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <WishlistListWidget />
+                        element: <WishlistListWidget />,
+                        loader: userIdLoader
                     },
                     {
                         path: ':wishlistId',
