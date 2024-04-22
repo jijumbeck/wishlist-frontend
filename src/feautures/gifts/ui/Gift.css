@@ -1,0 +1,24 @@
+.gift-card {
+    height: 200px;
+    width: 180px;
+
+    background-color: #fff;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.gift-card:hover {
+    cursor: pointer;
+    background-color: #e2e2e2;
+}
+
+.gift-card img {
+    width: calc(180px - 2 * 20px);
+}
+
+.shadow {
+    box-shadow: inset 0 0 10px 10px #000;
+}

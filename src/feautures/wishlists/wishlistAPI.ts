@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../../shared/api";
 import { Wishlist } from "./wishlist.dto";
+import { Gift } from "../gifts/gift.dto";
 
 export const wishlistAPI = createApi({
     reducerPath: 'wishlistApi',
@@ -29,9 +30,20 @@ export const wishlistAPI = createApi({
                 console.log(result);
                 return [{ type: 'Wishlist', id: result?.creatorId }]
             }
+        }),
+
+        getWishlistInfo: builder.query<Wishlist, string>({
+            query: (wishlistId: string) => `wishlist/${wishlistId}`
+        }),
+
+        getWishlistGifts: builder.query<Gift[], string>({
+            query: (wishlistId: string) => `wishlist/getGifts?wishlistId=${wishlistId}`
         })
     })
 })
 
 export const useGetWishlists = wishlistAPI.endpoints.getUserWishlists.useQuery;
+export const useGetWishlistInfo = wishlistAPI.endpoints.getWishlistInfo.useQuery;
+export const useGetWishlistsGifts = wishlistAPI.endpoints.getWishlistGifts.useQuery;
+
 export const useCreateWishlist = wishlistAPI.endpoints.createWishlist.useMutation;

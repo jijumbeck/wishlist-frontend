@@ -8,6 +8,7 @@ import { RegisterForm } from "../feautures/auth/ui/RegisterForm";
 import { ProfileWidget, userIdLoader } from "../feautures/profile/ui/ProfileWidget";
 import { WishlistListWidget } from "../feautures/wishlists/ui/WishlistList";
 import { WishlistWidget, wishlstIdLoader } from "../feautures/wishlists/ui/WishlistWidget";
+import { GiftWidget, giftIdLoader } from "../feautures/gifts/ui/GiftWidget";
 
 export const router = createBrowserRouter([
     {
@@ -55,7 +56,8 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: ':wishlistId/:giftId',
-                        element: <div>Gift</div>
+                        element: <GiftWidget />,
+                        loader: giftIdLoader
                     }
                 ]
             }
