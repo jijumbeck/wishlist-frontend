@@ -2,10 +2,16 @@ import AddIcon from '@mui/icons-material/Add';
 
 import { Wishlist } from "../wishlist.dto";
 import './Wishlist.css';
+import { useNavigate } from 'react-router-dom';
 
 export function WishlistPreview({ wishlist }: { wishlist: Wishlist }) {
+    const navigate = useNavigate();
+
     return (
-        <div className="wishlist-card">
+        <div
+            className="wishlist-card"
+            onClick={() => {navigate(`/${wishlist.creatorId}/${wishlist.id}`)}}
+        >
             <div className="wishlist-card__paper">
                 <h4>{wishlist.title}</h4>
             </div>
@@ -17,7 +23,7 @@ export function CreateWishlistButton() {
     return (
         <div className="wishlist-card">
             <div className="wishlist-card__paper">
-                <AddIcon 
+                <AddIcon
                     sx={{
                         fontSize: '54px',
                         alignSelf: 'center',
