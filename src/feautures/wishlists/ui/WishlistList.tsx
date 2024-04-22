@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
+import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
 import { useLoaderData } from "react-router-dom";
 import { useGetWishlists } from "../wishlistAPI";
 import { CreateWishlistButton, WishlistPreview } from "./WishlistPreview";
@@ -25,9 +25,11 @@ export function WishlistListWidget() {
                 justifyContent: 'center'
             }}
         >
-            <CreateWishlistButton />
+            {userRelationStatus === UserRelationStatus.Me && <CreateWishlistButton />}
             {
-                data.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
+                data && data.length > 0
+                ? data.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
+                : <p>У пользователя нет вишлистов.</p>
             }
         </div>
     )

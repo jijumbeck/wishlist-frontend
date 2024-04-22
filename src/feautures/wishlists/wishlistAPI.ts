@@ -14,7 +14,7 @@ export const wishlistAPI = createApi({
             }),
             providesTags: (result) => {
                 console.log(result);
-                return result
+                return result && result.length > 0
                     ? [{ type: 'Wishlist', id: result[0].creatorId }]
                     : ['Wishlist']
             }
