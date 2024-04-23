@@ -5,6 +5,7 @@ import { Wishlist } from "../wishlist.dto";
 import { useState } from "react";
 import { GiftList } from "../../gifts/ui/GiftList";
 import { ChangeWishlistAccess, ChangeWishlistTitle } from "./WishlistUpdateInfoElements";
+import { CoauthoringMenu } from "./Coauthoring";
 
 
 export async function wishlstIdLoader({ params }: { params: any }) {
@@ -21,8 +22,9 @@ export function WishlistWidget() {
     }
 
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
             <WishlistTitleInput wishlist={wishlist} />
+            <CoauthoringMenu wishlist={wishlist} />
             <GiftList />
         </div>
     )
@@ -33,12 +35,11 @@ function WishlistTitleInput({ wishlist }: { wishlist: Wishlist }) {
 
     return (
         <div style={{
-            fontSize: '32px',
             textAlign: 'start',
             display: 'flex',
             justifyContent: 'space-between'
         }}>
-            <div>
+            <div style={{ fontSize: '32px', }}>
                 <Link to={`/${wishlist.creatorId}`}>...</Link>
 
                 {' / '}
@@ -54,7 +55,7 @@ function WishlistTitleInput({ wishlist }: { wishlist: Wishlist }) {
                         width: 'fit-content'
                     }}
                 />
-                
+
                 {
                     title === wishlist.title
                         ? null

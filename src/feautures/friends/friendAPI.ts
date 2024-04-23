@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../../shared/api';
 import { FriendshipRequest } from './friend.dto';
+import { UserInfo } from '../profile/profile.dto';
 
 
 export const friendApi = createApi({
@@ -9,7 +10,7 @@ export const friendApi = createApi({
     tagTypes: ['friend'],
     endpoints: (builder) => ({
 
-        getFriends: builder.query<FriendshipRequest[], string>({
+        getFriends: builder.query<UserInfo[], string>({
             query: (userId: string) => ({
                 url: `friendship/getFriends?userId=${userId}`
             })
