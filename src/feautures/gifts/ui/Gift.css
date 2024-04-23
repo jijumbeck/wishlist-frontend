@@ -20,5 +20,14 @@
 }
 
 .shadow {
-    box-shadow: inset 0 0 10px 10px #000;
+    box-shadow: inset 0 0 10px 10px #00000048;
+}
+
+.gift-image {
+    width: 140px;
+    height: 140px;
+
+    background-color: #000;
+
+    flex-grow: 2;
 }

@@ -2,6 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Gift } from "../gift.dto";
 import './Gift.css';
 
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useAddGift } from "../../wishlists/wishlistAPI";
+import { Wishlist } from "../../wishlists/wishlist.dto";
+
+
 export function GiftPreview({ gift }: { gift: Gift }) {
     const navigate = useNavigate();
 
@@ -12,20 +17,24 @@ export function GiftPreview({ gift }: { gift: Gift }) {
                 navigate(`/${gift.userId}/${gift.wishlistId}/${gift.id}`)
             }}
         >
-            <img className="shadow" src='https://cdn-images.vetstreet.com/52/99/ca30e8b84b948d3b6ebdc7728a59/cat-next-to-christmas-present-istock-000029379338-medium-335lc113015jpg.jpg' />
+            <div className="gift-image shadow">
+            </div>
             {gift.title}
         </div>
     )
 }
 
-export function CreateGiftButton() {
+export function CreateGiftButton({ wishlist }: { wishlist: Wishlist }) {
+    const [addGift, metadata] = useAddGift();
 
     return (
         <div
             className="gift-card"
+            onClick={() => addGift(wishlist.id)}
         >
-            <img className="shadow" src='https://clipart-library.com/new_gallery/295189_plus-icon-png.png' />
-            <p>Новый подарок</p>
+            <div className="gift-image shadow">
+            </div>
+            Добавить подарок
         </div>
     )
 }
