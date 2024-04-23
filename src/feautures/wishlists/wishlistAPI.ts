@@ -6,7 +6,7 @@ import { Gift } from "../gifts/gift.dto";
 export const wishlistAPI = createApi({
     reducerPath: 'wishlistApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Wishlist'],
+    tagTypes: ['Wishlist', 'Gift'],
     endpoints: (builder) => ({
 
         getUserWishlists: builder.query<Wishlist[], string>({
@@ -33,11 +33,50 @@ export const wishlistAPI = createApi({
         }),
 
         getWishlistInfo: builder.query<Wishlist, string>({
-            query: (wishlistId: string) => `wishlist/${wishlistId}`
+            query: (wishlistId: string) => `wishlist/${wishlistId}`,
+            providesTags: () => {
+                return ['Wishlist']
+            }
+        }),
+
+        updateWishlistInfo: builder.mutation<void, Wishlist>({
+            query: (wishlist: Wishlist) => ({
+                url: `wishlist/${wishlist.id}`,
+                method: 'PATCH',
+                body: wishlist
+            }),
+            invalidatesTags: () => ['Wishlist']
+        }),
+
+        deleteWishlist: builder.mutation<void, string>({
+            query: (wishlistId: string) => ({
+                url: `wishlist/${wishlistId}`,
+                method: 'DELETE',
+            })
         }),
 
         getWishlistGifts: builder.query<Gift[], string>({
-            query: (wishlistId: string) => `wishlist/getGifts?wishlistId=${wishlistId}`
+            query: (wishlistId: string) => `wishlist/getGifts?wishlistId=${wishlistId}`,
+            providesTags: (result) => {
+                if (result && result.length > 0) {
+                    return [{ type: 'Gift', id: result?.[0].wishlistId }]
+                }
+                return ['Gift'];
+            }
+        }),
+
+        addGift: builder.mutation<Gift, string>({
+            query: (wishlistId: string) => ({
+                url: `wishlist/addGift`,
+                method: 'POST',
+                body: { wishlistId: wishlistId }
+            }),
+            invalidatesTags: (result) => {
+                if (!result) {
+                    return ['Gift'];
+                }
+                return [{ type: 'Gift', id: result.wishlistId }];
+            }
         })
     })
 })
@@ -47,3 +86,5 @@ export const useGetWishlistInfo = wishlistAPI.endpoints.getWishlistInfo.useQuery
 export const useGetWishlistsGifts = wishlistAPI.endpoints.getWishlistGifts.useQuery;
 
 export const useCreateWishlist = wishlistAPI.endpoints.createWishlist.useMutation;
+export const useAddGift = wishlistAPI.endpoints.addGift.useMutation;
+export const useUpdateWishlist = wishlistAPI.endpoints.updateWishlistInfo.useMutation;

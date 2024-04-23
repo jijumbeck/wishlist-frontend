@@ -4,7 +4,7 @@ import { TextField } from "@mui/material";
 import { Wishlist } from "../wishlist.dto";
 import { useState } from "react";
 import { GiftList } from "../../gifts/ui/GiftList";
-
+import { ChangeWishlistAccess, ChangeWishlistTitle } from "./WishlistUpdateInfoElements";
 
 
 export async function wishlstIdLoader({ params }: { params: any }) {
@@ -32,21 +32,37 @@ function WishlistTitleInput({ wishlist }: { wishlist: Wishlist }) {
     const [title, setTitle] = useState(wishlist.title);
 
     return (
-        <div style={{ fontSize: '32px', textAlign: 'start' }}>
-            <Link to={`/${wishlist.creatorId}`}>...</Link>
-            {' / '}
-            {/* <TextField
-                variant="standard"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                inputProps={{
-                    style: { fontSize: '32px', width: 'auto' }
-                }}
-                sx={{
-                    width: 'auto'
-                }}
-            /> */}
-            {wishlist.title}
+        <div style={{
+            fontSize: '32px',
+            textAlign: 'start',
+            display: 'flex',
+            justifyContent: 'space-between'
+        }}>
+            <div>
+                <Link to={`/${wishlist.creatorId}`}>...</Link>
+
+                {' / '}
+
+                <TextField
+                    variant="standard"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    inputProps={{
+                        style: { fontSize: '32px', width: 'fit-content' }
+                    }}
+                    sx={{
+                        width: 'fit-content'
+                    }}
+                />
+                
+                {
+                    title === wishlist.title
+                        ? null
+                        : <ChangeWishlistTitle wishlist={wishlist} newTitle={title} />
+                }
+            </div>
+
+            <ChangeWishlistAccess wishlist={wishlist} />
         </div>
     )
 }
