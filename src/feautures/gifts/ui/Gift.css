@@ -31,3 +31,14 @@
 
     flex-grow: 2;
 }
+
+.gift-page {
+    
+}
+
+.gift-page .gift-image {
+    width: 400px;
+    height: 400px;
+
+    background-color: #000;
+}

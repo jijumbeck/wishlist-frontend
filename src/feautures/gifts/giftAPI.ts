@@ -5,18 +5,25 @@ import { Gift } from "../gifts/gift.dto";
 export const giftApi = createApi({
     reducerPath: 'giftApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Gift'],
+    tagTypes: ['Gift', 'GiftsInWishlist'],
     endpoints: (builder) => ({
 
         getGift: builder.query<Gift, string>({
-            query: (giftId: string) => `gift/${giftId}`
+            query: (giftId: string) => `gift/${giftId}`,
+            providesTags: (result) => {
+                return [{ type: 'Gift', id: result?.id }]
+            }
         }),
 
         deleteGift: builder.mutation<unknown, string>({
             query: (giftId: string) => ({
                 method: 'DELETE',
                 url: `gift/${giftId}`
-            })
+            }),
+            invalidatesTags: (result, error, id) => {
+                console.log(result, error, id);
+                return ['GiftsInWishlist', { type: 'Gift', id }]
+            }
         }),
 
         changeGiftInfo: builder.mutation<string, Gift>({
@@ -24,7 +31,8 @@ export const giftApi = createApi({
                 url: `gift/${gift.id}`,
                 method: 'PATCH',
                 body: gift
-            })
+            }),
+            invalidatesTags: (result) => [{ type: 'Gift', id: result }]
         })
     })
 })

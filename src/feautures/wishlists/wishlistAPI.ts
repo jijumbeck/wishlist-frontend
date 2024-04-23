@@ -6,7 +6,7 @@ import { Gift } from "../gifts/gift.dto";
 export const wishlistAPI = createApi({
     reducerPath: 'wishlistApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Wishlist', 'Gift'],
+    tagTypes: ['Wishlist', 'Gift', 'WishlistForUser', 'GiftsInWishlist'],
     endpoints: (builder) => ({
 
         getUserWishlists: builder.query<Wishlist[], string>({
@@ -16,8 +16,8 @@ export const wishlistAPI = createApi({
             providesTags: (result) => {
                 console.log(result);
                 return result && result.length > 0
-                    ? [{ type: 'Wishlist', id: result[0].creatorId }]
-                    : ['Wishlist']
+                    ? [{ type: 'WishlistForUser', id: result[0].creatorId }]
+                    : ['WishlistForUser']
             }
         }),
 
@@ -28,14 +28,14 @@ export const wishlistAPI = createApi({
             }),
             invalidatesTags: (result) => {
                 console.log(result);
-                return [{ type: 'Wishlist', id: result?.creatorId }]
+                return [{ type: 'WishlistForUser', id: result?.creatorId }]
             }
         }),
 
         getWishlistInfo: builder.query<Wishlist, string>({
             query: (wishlistId: string) => `wishlist/${wishlistId}`,
-            providesTags: () => {
-                return ['Wishlist']
+            providesTags: (result) => {
+                return [{ type: 'Wishlist', id: result?.id }]
             }
         }),
 
@@ -45,23 +45,25 @@ export const wishlistAPI = createApi({
                 method: 'PATCH',
                 body: wishlist
             }),
-            invalidatesTags: () => ['Wishlist']
+            invalidatesTags: () => ['Wishlist', 'WishlistForUser']
         }),
 
         deleteWishlist: builder.mutation<void, string>({
             query: (wishlistId: string) => ({
                 url: `wishlist/${wishlistId}`,
                 method: 'DELETE',
-            })
+            }),
+            invalidatesTags: () => ['Wishlist']
         }),
 
         getWishlistGifts: builder.query<Gift[], string>({
             query: (wishlistId: string) => `wishlist/getGifts?wishlistId=${wishlistId}`,
-            providesTags: (result) => {
+            providesTags: (result, error, id) => {
+                console.log(id);
                 if (result && result.length > 0) {
-                    return [{ type: 'Gift', id: result?.[0].wishlistId }]
-                }
-                return ['Gift'];
+                    return [{ type: 'GiftsInWishlist', id }]
+                } 
+                return ['GiftsInWishlist'];
             }
         }),
 
@@ -73,9 +75,13 @@ export const wishlistAPI = createApi({
             }),
             invalidatesTags: (result) => {
                 if (!result) {
-                    return ['Gift'];
+                    return ['GiftsInWishlist'];
                 }
-                return [{ type: 'Gift', id: result.wishlistId }];
+
+                return ['GiftsInWishlist']
+
+                // TO DO:
+                //return [{ type: 'GiftsInWishlist', id: result.wishlistId }];
             }
         })
     })

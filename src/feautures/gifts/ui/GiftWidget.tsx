@@ -1,7 +1,13 @@
 import { Link, useLoaderData } from "react-router-dom";
 import { Gift } from "../gift.dto";
-import { useGetGift } from "../giftAPI";
-import { Button } from "@mui/material";
+import { useChangeGift, useGetGift } from "../giftAPI";
+import { Button, TextField } from "@mui/material";
+import { useContext, useState } from "react";
+import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SendIcon from '@mui/icons-material/Send';
+import { EditGiftForm } from "./GiftEditForm";
+
 
 export function giftIdLoader({ params }: { params: any }) {
     const giftId = params.giftId;
@@ -12,28 +18,33 @@ export function GiftWidget() {
     const giftId = useLoaderData() as string;
     const gift = useGetGift(giftId).data;
 
+    const relationStatus = useContext(UserRelationStatusContext);
+
     if (!gift) {
         return (<p>Загрузка...</p>)
     }
 
     return (
-        <div>
-            <GiftTitle gift={gift} />
-            <p>Описание: {gift.description}</p>
-            {gift.URL ? <a href={gift.URL}>Ссылка на подарок</a> : null}
-            {gift.price ? <p>Цена: {gift.price}</p> : null}
-            <Button>Зарезервировать</Button>
-            <Button>Добавить в вишлист</Button>
+        <div className="gift-page">
+
+            {
+                relationStatus === UserRelationStatus.Me
+                    ? <EditGiftWidget gift={gift} />
+                    : <GiftCardPage gift={gift} />
+            }
         </div>
     )
 }
 
 export function GiftTitle({ gift }: { gift: Gift }) {
+    const [title, setTitle] = useState(gift.title);
+    const [changeGiftInfo, metadata] = useChangeGift();
+
     return (
         <div style={{ fontSize: '32px', textAlign: 'start' }}>
             <Link to={`/${gift.userId}/${gift.wishlistId}`}>...</Link>
             {' / '}
-            {/* <TextField
+            <TextField
                 variant="standard"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
@@ -43,8 +54,55 @@ export function GiftTitle({ gift }: { gift: Gift }) {
                 sx={{
                     width: 'auto'
                 }}
-            /> */}
-            {gift.title}
+            />
+            {
+                title === gift.title
+                    ? null
+                    : (<LoadingButton
+                        loading={metadata.isLoading}
+                        onClick={() => {
+                            changeGiftInfo({ ...gift, title: title })
+                        }}
+                    >
+                        <SendIcon />
+                    </LoadingButton>)
+            }
         </div>
+    )
+}
+
+function EditGiftWidget({ gift }: { gift: Gift }) {
+    return (
+        <>
+            <GiftTitle gift={gift} />
+
+            <div style={{ display: 'flex', gap: '20px', margin: '40px' }}>
+                <div className="gift-image"></div>
+                <EditGiftForm gift={gift} />
+            </div>
+        </>
+    )
+}
+
+function GiftCardPage({ gift }: { gift: Gift }) {
+    return (
+        <>
+            <div style={{ fontSize: '32px', textAlign: 'start' }}>
+                <Link to={`/${gift.userId}/${gift.wishlistId}`}>...</Link>
+                {' / '}
+                {gift.title}
+            </div>
+
+            <div>
+                <div className="gift-image"></div>
+                <div style={{ display: "flex" }}>
+                    <p>Описание: {gift.description}</p>
+                    {gift.URL ? <a href={gift.URL}>Ссылка на подарок</a> : null}
+                    {gift.price ? <p>Цена: {gift.price}</p> : null}
+                    <Button>Зарезервировать</Button>
+                    <Button>Добавить в вишлист</Button>
+                </div>
+            </div>
+        </>
     )
 }
