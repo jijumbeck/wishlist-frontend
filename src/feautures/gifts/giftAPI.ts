@@ -32,7 +32,7 @@ export const giftApi = createApi({
                 method: 'PATCH',
                 body: gift
             }),
-            invalidatesTags: (result) => [{ type: 'Gift', id: result }]
+            invalidatesTags: (result, error, gift) => [{ type: 'Gift', id: gift.id }, { type: 'GiftsInWishlist', id: gift.wishlistId }]
         })
     })
 })

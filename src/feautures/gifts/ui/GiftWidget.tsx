@@ -7,6 +7,7 @@ import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from '@mui/icons-material/Send';
 import { EditGiftForm } from "./GiftEditForm";
+import { useGetReservations } from "../reservationAPI";
 
 
 export function giftIdLoader({ params }: { params: any }) {
@@ -85,6 +86,7 @@ function EditGiftWidget({ gift }: { gift: Gift }) {
 }
 
 function GiftCardPage({ gift }: { gift: Gift }) {
+
     return (
         <>
             <div style={{ fontSize: '32px', textAlign: 'start' }}>
@@ -93,16 +95,25 @@ function GiftCardPage({ gift }: { gift: Gift }) {
                 {gift.title}
             </div>
 
-            <div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', margin: '40px' }}>
                 <div className="gift-image"></div>
-                <div style={{ display: "flex" }}>
+                <div style={{ width: '50%', display: "flex", flexDirection: 'column', alignItems: 'flex-start' }}>
                     <p>Описание: {gift.description}</p>
                     {gift.URL ? <a href={gift.URL}>Ссылка на подарок</a> : null}
                     {gift.price ? <p>Цена: {gift.price}</p> : null}
-                    <Button>Зарезервировать</Button>
-                    <Button>Добавить в вишлист</Button>
+                    <Button
+                        variant="contained"
+                    >
+                        Зарезервировать
+                    </Button>
                 </div>
             </div>
         </>
     )
+}
+
+function ReserveButton({ gift }: { gift: Gift }) {
+    const reservations = useGetReservations({}).data;
+
+    //const isGiftReserved = reservations?.findIndex(reservation => reservation.giftId === gift.id) >= 0;
 }

@@ -10,3 +10,8 @@ export interface Gift {
     userId: string;
     wishlistId: string;
 }
+
+export interface Reservation {
+    userId: string;
+    giftId: string;
+}

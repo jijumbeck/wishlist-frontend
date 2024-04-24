@@ -59,11 +59,8 @@ export const wishlistAPI = createApi({
         getWishlistGifts: builder.query<Gift[], string>({
             query: (wishlistId: string) => `wishlist/getGifts?wishlistId=${wishlistId}`,
             providesTags: (result, error, id) => {
-                console.log(id);
-                if (result && result.length > 0) {
-                    return [{ type: 'GiftsInWishlist', id }]
-                } 
-                return ['GiftsInWishlist'];
+                console.log('gwtWishlistGifts', id);
+                return [{ type: 'GiftsInWishlist', id }]
             }
         }),
 
