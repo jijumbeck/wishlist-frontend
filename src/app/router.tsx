@@ -9,6 +9,7 @@ import { ProfileWidget, userIdLoader } from "../feautures/profile/ui/ProfileWidg
 import { WishlistListWidget } from "../feautures/wishlists/ui/WishlistList";
 import { WishlistWidget, wishlstIdLoader } from "../feautures/wishlists/ui/WishlistWidget";
 import { GiftWidget, giftIdLoader } from "../feautures/gifts/ui/GiftWidget";
+import { SearchWidget } from "../feautures/search/SearchWidget";
 
 export const router = createBrowserRouter([
     {
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <div>Search</div>,
+                element: <SearchWidget />,
             },
             {
                 path: "/about",

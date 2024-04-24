@@ -28,8 +28,8 @@ export function WishlistListWidget() {
             {userRelationStatus === UserRelationStatus.Me && <CreateWishlistButton />}
             {
                 data && data.length > 0
-                ? data.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
-                : <p>У пользователя нет вишлистов.</p>
+                    ? data.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
+                    : <p>У пользователя нет вишлистов.</p>
             }
         </div>
     )

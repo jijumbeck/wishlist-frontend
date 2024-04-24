@@ -21,6 +21,10 @@ export const wishlistAPI = createApi({
             }
         }),
 
+        getPublicWishlists: builder.query<Wishlist[], string>({
+            query: (search: string) => `wishlist/publicWishlists?search=${search}`
+        }),
+
         createWishlist: builder.mutation<Wishlist, void>({
             query: () => ({
                 method: 'POST',
@@ -87,6 +91,7 @@ export const wishlistAPI = createApi({
 export const useGetWishlists = wishlistAPI.endpoints.getUserWishlists.useQuery;
 export const useGetWishlistInfo = wishlistAPI.endpoints.getWishlistInfo.useQuery;
 export const useGetWishlistsGifts = wishlistAPI.endpoints.getWishlistGifts.useQuery;
+export const useGetPublicWishlists = wishlistAPI.endpoints.getPublicWishlists.useQuery;
 
 export const useCreateWishlist = wishlistAPI.endpoints.createWishlist.useMutation;
 export const useAddGift = wishlistAPI.endpoints.addGift.useMutation;
