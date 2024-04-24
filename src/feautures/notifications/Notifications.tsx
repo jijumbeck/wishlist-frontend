@@ -1,4 +1,4 @@
-import { Badge, IconButton, Menu, MenuItem } from "@mui/material";
+import { Badge, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import React from "react";
 
@@ -56,5 +56,24 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
                 <MenuItem onClick={handleClose}>Logout</MenuItem>
             </Menu>
         </div>
+    )
+}
+
+function NotificationMenuItem({ notification }: { notification: Notification }) {
+    return (
+        <MenuItem>
+            {notification.text}
+            <Button
+                variant="outlined"
+            >
+                Accept
+            </Button>
+            <Button
+                variant="outlined"
+                color="error"
+            >
+                Decline
+            </Button>
+        </MenuItem>
     )
 }
