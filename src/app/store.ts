@@ -7,6 +7,7 @@ import { friendApi } from '../feautures/friends/friendAPI';
 import { giftApi } from '../feautures/gifts/giftAPI';
 import { accessApi } from '../feautures/wishlists/accessAPI';
 import { coauthoringApi } from '../feautures/wishlists/coauthoringAPI';
+import { notificationApi } from '../feautures/notifications/notificationAPI';
 
 
 export const store = configureStore({
@@ -17,7 +18,8 @@ export const store = configureStore({
         [friendApi.reducerPath]: friendApi.reducer,
         [giftApi.reducerPath]: giftApi.reducer,
         [accessApi.reducerPath]: accessApi.reducer,
-        [coauthoringApi.reducerPath]: coauthoringApi.reducer
+        [coauthoringApi.reducerPath]: coauthoringApi.reducer,
+        [notificationApi.reducerPath]: notificationApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
@@ -27,6 +29,7 @@ export const store = configureStore({
             .concat(giftApi.middleware)
             .concat(accessApi.middleware)
             .concat(coauthoringApi.middleware)
+            .concat(notificationApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

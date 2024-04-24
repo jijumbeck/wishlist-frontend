@@ -1,22 +1,18 @@
 import { Badge, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import React from "react";
-
-
-export interface Notification {
-    text: string,
-    accept: (params: any) => any,
-    decline: (params: any) => any
-}
+import { Notification, NotificationType, useGetNotifications } from "./notificationAPI";
+import { useGetUserInfo } from "../profile/profileAPI";
 
 
 export function Notifications() {
+    const notifications = useGetNotifications({}).data;
 
-    return (<NotificationsPresenter notifications={[]} />)
+    return (<NotificationsPresenter notifications={notifications} />)
 }
 
 
-function NotificationsPresenter({ notifications }: { notifications: Notification[] }) {
+function NotificationsPresenter({ notifications }: { notifications: Notification[] | undefined }) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -25,6 +21,7 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
     const handleClose = () => {
         setAnchorEl(null);
     };
+
 
     return (
         <div>
@@ -35,7 +32,7 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
             >
-                <Badge color="secondary" badgeContent={1} invisible={false}>
+                <Badge color="secondary" badgeContent={notifications ? notifications.length : 0} invisible={false}>
                     <NotificationsIcon />
                 </Badge>
             </IconButton>
@@ -49,30 +46,66 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
                 }}
             >
                 {
-                    notifications.map(notification => <MenuItem>{notification.text}</MenuItem>)
+                    notifications && notifications.length > 0
+                        ? notifications.map(notification => <NotificationMenuItem notification={notification} />)
+                        : <p>Нет уведомлений.</p>
                 }
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
             </Menu>
         </div>
     )
 }
 
 function NotificationMenuItem({ notification }: { notification: Notification }) {
+    if (notification.type === NotificationType.Friend) {
+        return <FriendNotification userId={String(notification.requestSenderId)} />
+    }
+
+    return <CoauthorNotification />
+}
+
+function FriendNotification({ userId }: { userId: string }) {
+    const user = useGetUserInfo(userId).data;
+
+    if (!user) {
+        return <p>Загрузка...</p>
+    }
+
     return (
         <MenuItem>
-            {notification.text}
+            <p>
+                Запрос на дружбу: {user.login}
+            </p>
+            <div>
+                <Button
+                    variant="outlined"
+                >
+                    Принять
+                </Button>
+                <Button
+                    variant="outlined"
+                    color="error"
+                >
+                    Отклонить
+                </Button>
+            </div>
+        </MenuItem>
+    )
+}
+
+function CoauthorNotification() {
+    return (
+        <MenuItem>
+            Запрос на соавторство
             <Button
                 variant="outlined"
             >
-                Accept
+                Принять
             </Button>
             <Button
                 variant="outlined"
                 color="error"
             >
-                Decline
+                Отклонить
             </Button>
         </MenuItem>
     )
