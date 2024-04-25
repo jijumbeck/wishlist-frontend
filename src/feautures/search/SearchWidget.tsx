@@ -1,11 +1,14 @@
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { useGetPublicWishlists } from "../wishlists/wishlistAPI";
 import { WishlistPreview } from "../wishlists/ui/WishlistPreview";
+import SearchIcon from '@mui/icons-material/Search';
+
 
 export function SearchWidget() {
     const [input, setInput] = useState('');
     const wishlists = useGetPublicWishlists(input.toLowerCase()).data;
+    console.log(wishlists);
 
     if (!wishlists) {
         return (<p>Загрузка...</p>)
@@ -31,6 +34,7 @@ export function SearchWidget() {
                 sx={{
                     fontSize: '46px'
                 }}
+                placeholder="Найдите подборку подарков"
 
                 value={input}
                 onChange={e => setInput(e.target.value)}
@@ -42,10 +46,10 @@ export function SearchWidget() {
                     flexWrap: 'wrap',
                     gap: '35px',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    margin: '40px 0'
                 }}
             >
-                {input}
                 {
                     wishlists && wishlists.length > 0
                         ? wishlists.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
