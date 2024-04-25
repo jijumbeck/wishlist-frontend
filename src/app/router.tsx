@@ -12,6 +12,7 @@ import { GiftWidget, giftIdLoader } from "../feautures/gifts/ui/GiftWidget";
 import { SearchWidget } from "../feautures/search/SearchWidget";
 import { SettingsWidget } from "../feautures/profile/ui/SettingsWidget";
 import { ReservationWidget } from "../feautures/gifts/ui/Reservation";
+import { UsersWidget } from "../feautures/friends/ui/UsersWidget";
 
 export const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
             {
                 path: '/reservations',
                 element: <ReservationWidget />
+            },
+            {
+                path: '/users',
+                element: <UsersWidget />
             },
             {
                 path: '/:userId',

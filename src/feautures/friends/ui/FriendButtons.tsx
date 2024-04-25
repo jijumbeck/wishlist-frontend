@@ -3,7 +3,7 @@ import { useAddFriend, useDeleteFriend, useGetFriends, useGetFriendshipRequest }
 import { useGetProfileInfo, useGetUserInfo } from "../../profile/profileAPI";
 import { FriendRequestStatus, FriendshipRequest } from "../friend.dto";
 
-export function AddFriendButton({ userToAddId }: { userToAddId: string }) {
+export function AddFriendButton({ userToAddId, text }: { userToAddId: string, text?: string }) {
     const [addFriend, metadata] = useAddFriend();
 
     return (
@@ -32,6 +32,7 @@ export function DeleteFriendButton({ userTodeleteId, friendshipRequest }: { user
                 deleteFriend(userTodeleteId);
             }}
             disabled={metadata.isLoading}
+            color='error'
         >
             {metadata.isSuccess ? "Запрос отправлен"
                 : (metadata.isError ? "Произошла ошибка" : buttonText)}
@@ -40,16 +41,19 @@ export function DeleteFriendButton({ userTodeleteId, friendshipRequest }: { user
 }
 
 export function FriendButton({ userId }: { userId: string }) {
-    const friendshipRequest = useGetFriendshipRequest(userId).data;
+    let friendshipRequest = useGetFriendshipRequest(userId).data;
 
     if (!friendshipRequest) {
-        return (<p>Загрузка...</p>)
+        return (<AddFriendButton userToAddId={userId} text='Добавить в друзья' />)
     }
 
-    if (friendshipRequest.status === FriendRequestStatus.None ||
-        (friendshipRequest.userIdFirst === userId && friendshipRequest.status === FriendRequestStatus.Subscriber)) {
+    if (friendshipRequest.status === FriendRequestStatus.None) {
+        return (<AddFriendButton userToAddId={userId} text='Добавить в друзья' />)
+    }
+
+    if (friendshipRequest.userIdFirst === userId && friendshipRequest.status === FriendRequestStatus.Subscriber) {
         return (
-            <AddFriendButton userToAddId={userId} />
+            <AddFriendButton userToAddId={userId} text="Добавить в друзья" />
         )
     }
 

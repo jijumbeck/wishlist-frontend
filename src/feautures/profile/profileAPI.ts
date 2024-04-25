@@ -22,6 +22,10 @@ export const profileAPI = createApi({
             })
         }),
 
+        getUsersBySearch: builder.query<UserInfo[], string>({
+            query: (input: string) => `user/getUsersBySearch?input=${input}`
+        }),
+
         changeUserInfo: builder.mutation<unknown, UserInfo>({
             query: (user) => ({
                 url: `user/${user.id}`,
@@ -43,6 +47,7 @@ export const profileAPI = createApi({
 
 export const useGetProfileInfo = profileAPI.endpoints.getProfileInfo.useQuery;
 export const useGetUserInfo = profileAPI.endpoints.getUserInfo.useQuery;
+export const useGetUsersBySearch = profileAPI.endpoints.getUsersBySearch.useQuery;
 
 export const useChangeUserInfo = profileAPI.endpoints.changeUserInfo.useMutation;
 export const useChangePassword = profileAPI.endpoints.changePassword.useMutation;
