@@ -28,12 +28,13 @@ export const reservationApi = createApi({
                 url: `reservation`,
                 method: 'DELETE',
                 body: { giftId }
-            })
+            }),
+            invalidatesTags: (result, error, id) => [{ type: 'Reservation', id }]
         }),
 
         getGiftReservations: builder.query<Reservation[], string>({
             query: (giftId: string) => `reservation/${giftId}`,
-            providesTags: () => ['Reservation']
+            providesTags: (result, error, id) => [{ type: 'Reservation', id }]
         })
 
     })

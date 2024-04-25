@@ -7,7 +7,10 @@ import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from '@mui/icons-material/Send';
 import { EditGiftForm } from "./GiftEditForm";
-import { useGetReservations } from "../reservationAPI";
+import { useGetReservations, useReserveGift } from "../reservationAPI";
+import { AddGift } from "./AddGift";
+import { useGetFriends } from "../../friends/friendAPI";
+import { ReservationCardComponent } from "./GiftPreview";
 
 
 export function giftIdLoader({ params }: { params: any }) {
@@ -85,7 +88,8 @@ function EditGiftWidget({ gift }: { gift: Gift }) {
     )
 }
 
-function GiftCardPage({ gift }: { gift: Gift }) {
+export function GiftCardPage({ gift }: { gift: Gift }) {
+    const relationStatus = useContext(UserRelationStatusContext);
 
     return (
         <>
@@ -97,15 +101,14 @@ function GiftCardPage({ gift }: { gift: Gift }) {
 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', margin: '40px' }}>
                 <div className="gift-image"></div>
-                <div style={{ width: '50%', display: "flex", flexDirection: 'column', alignItems: 'flex-start' }}>
+                <div style={{ width: '50%', display: "flex", flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                     <p>Описание: {gift.description}</p>
                     {gift.URL ? <a href={gift.URL}>Ссылка на подарок</a> : null}
                     {gift.price ? <p>Цена: {gift.price}</p> : null}
-                    <Button
-                        variant="contained"
-                    >
-                        Зарезервировать
-                    </Button>
+                    <AddGift />
+                    {
+                        relationStatus === UserRelationStatus.Friend ? <ReservationCardComponent gift={gift} /> : null
+                    }
                 </div>
             </div>
         </>
@@ -113,7 +116,14 @@ function GiftCardPage({ gift }: { gift: Gift }) {
 }
 
 function ReserveButton({ gift }: { gift: Gift }) {
-    const reservations = useGetReservations({}).data;
+    const [reserveGift, metadata] = useReserveGift();
 
-    //const isGiftReserved = reservations?.findIndex(reservation => reservation.giftId === gift.id) >= 0;
+    return (
+        <Button
+            variant="outlined"
+            onClick={() => reserveGift(gift.id)}
+        >
+            Зарезервировать
+        </Button>
+    )
 }

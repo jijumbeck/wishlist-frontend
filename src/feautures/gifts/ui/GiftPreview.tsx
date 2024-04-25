@@ -3,10 +3,11 @@ import { Gift } from "../gift.dto";
 import './Gift.css';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { useAddGift } from "../../wishlists/wishlistAPI";
 import { Wishlist } from "../../wishlists/wishlist.dto";
 import { IconButton } from "@mui/material";
-import { useGetReservations, useReserveGift } from "../reservationAPI";
+import { useGetGiftReservations, useGetReservations, useRemoveReservation, useReserveGift } from "../reservationAPI";
 
 
 export function GiftPreview({ gift }: { gift: Gift }) {
@@ -59,26 +60,30 @@ export function GiftPreviewForFriend({ gift }: { gift: Gift }) {
                 {gift.title}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center'}}>
-                <ReservationButton gift={gift} />
-                <ReservationCount gift={gift} />
-            </div>
+            <ReservationCardComponent gift={gift} />
         </div>
 
     )
 }
 
-export function ReservationCount({ gift }: { gift: Gift }) {
-    const reservations = useGetReservations(gift.id).data;
+export function ReservationCardComponent({ gift }: { gift: Gift }) {
+    const reservations = useGetGiftReservations(gift.id).data;
 
     return (
-        <div>
-            Подарят: {reservations ? reservations.length : 0}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {
+                reservations && reservations.findIndex(reservation => reservation.giftId === gift.id) >= 0
+                    ? <RemoveReservationButton gift={gift} />
+                    : <AddReservationButton gift={gift} />
+            }
+            <p>
+                Подарят: {reservations ? reservations.length : 0}
+            </p>
         </div>
     )
 }
 
-export function ReservationButton({ gift }: { gift: Gift }) {
+export function AddReservationButton({ gift }: { gift: Gift }) {
     const [reserveGift, metadata] = useReserveGift();
 
     return (
@@ -86,6 +91,18 @@ export function ReservationButton({ gift }: { gift: Gift }) {
             onClick={() => reserveGift(gift.id)}
         >
             <AddCircleOutlineIcon />
+        </IconButton>
+    )
+}
+
+export function RemoveReservationButton({ gift }: { gift: Gift }) {
+    const [removeReservation, metadata] = useRemoveReservation();
+
+    return (
+        <IconButton
+            onClick={() => removeReservation(gift.id)}
+        >
+            <RemoveCircleOutlineIcon />
         </IconButton>
     )
 }
