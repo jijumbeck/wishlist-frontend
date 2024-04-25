@@ -3,6 +3,7 @@ import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/
 import { useLoaderData } from "react-router-dom";
 import { useGetWishlists } from "../wishlistAPI";
 import { CreateWishlistButton, WishlistPreview } from "./WishlistPreview";
+import { ReservationPreview } from "../../gifts/ui/Reservation";
 
 export function WishlistListWidget() {
     const userId = useLoaderData() as string;
@@ -25,7 +26,7 @@ export function WishlistListWidget() {
                 justifyContent: 'center'
             }}
         >
-            {userRelationStatus === UserRelationStatus.Me && <CreateWishlistButton />}
+            {userRelationStatus === UserRelationStatus.Me && (<><CreateWishlistButton /> <ReservationPreview /></>)}
             {
                 data && data.length > 0
                     ? data.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
