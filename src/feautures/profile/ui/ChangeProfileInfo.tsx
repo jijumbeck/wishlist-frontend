@@ -1,6 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import { TextField } from "@mui/material";
-import { UserInfo } from "../profile.dto";
+import { ChangeUserInfoDTO, UserInfo } from "../profile.dto";
 import { useChangeUserInfo } from "../profileAPI";
 import * as Yup from 'yup';
 import { useFormik } from "formik";
@@ -8,20 +8,19 @@ import { useFormik } from "formik";
 
 const initialValues = (user: UserInfo) => {
     return {
-        name: '',
-        lastName: '',
-        birthdate: (new Date()).toJSON(),
-        ...user,
-    } as UserInfo;
+        id: user.id,
+        name: user.name ? user.name : '',
+        lastName: user.lastName ? user.lastName : '',
+        login: user.login,
+        email: user.email
+    } as ChangeUserInfoDTO;
 }
 
 const validationSchema = Yup.object({
-    name: Yup.string(),
-    lastName: Yup.string(),
-    birthdate: Yup.string(),
     login: Yup.string().required('Логин должен содержать хотя бы один символ.'),
     email: Yup.string().required('Email не может быть пустым').email('Введите валидный email.')
 })
+
 
 
 export function ChangeProfileForm({ user }: { user: UserInfo }) {
@@ -30,7 +29,9 @@ export function ChangeProfileForm({ user }: { user: UserInfo }) {
     const formik = useFormik({
         initialValues: initialValues(user),
         validationSchema,
-        onSubmit: values => changeUserInfo(values)
+        onSubmit: async (values) => {
+            changeUserInfo(values);
+        }
     });
 
     return (

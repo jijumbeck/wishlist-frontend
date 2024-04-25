@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../../shared/api';
-import { UserInfo } from './profile.dto';
+import { ChangeUserInfoDTO, UserInfo } from './profile.dto';
 
 
 export const profileAPI = createApi({
@@ -26,7 +26,7 @@ export const profileAPI = createApi({
             query: (input: string) => `user/getUsersBySearch?input=${input}`
         }),
 
-        changeUserInfo: builder.mutation<unknown, UserInfo>({
+        changeUserInfo: builder.mutation<unknown, ChangeUserInfoDTO>({
             query: (user) => ({
                 url: `user/${user.id}`,
                 method: 'PATCH',

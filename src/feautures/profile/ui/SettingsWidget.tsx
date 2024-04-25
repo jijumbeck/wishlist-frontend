@@ -6,11 +6,9 @@ import { ChangeProfileForm } from "./ChangeProfileInfo";
 export function SettingsWidget() {
     const user = useGetProfileInfo({}).data;
 
-    const user1 = {
-        id: '1',
-        email: 'email@email.com',
-        login: 'login'
-    };
+    if (!user) {
+        return (<p>Загрузка...</p>)
+    }
 
     return (
         <div
@@ -22,7 +20,7 @@ export function SettingsWidget() {
                 margin: '40px auto'
             }}
         >
-            <ChangeProfileForm user={user1} />
+            <ChangeProfileForm user={user} />
             <ChangePassword />
         </div>
     )

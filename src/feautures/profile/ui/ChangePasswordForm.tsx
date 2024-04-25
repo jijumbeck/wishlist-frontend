@@ -20,9 +20,7 @@ const validationSchema = Yup.object({
         .test('DoesPasswordHaveLowercase',
             'Пароль должен содержать строчную букву',
             password => password !== password.toUpperCase())
-        .matches(/\d+/, 'Пароль должен содержать цифру.')
-        .matches(/[!"#$%&()*+,-./:;<=>?@[\\ \]^_`{|}~']/,
-            'Пароль должен содержать специальный символ.'),
+        .matches(/\d+/, 'Пароль должен содержать цифру.'),
     confirmPassword: Yup.string().required()
 })
 

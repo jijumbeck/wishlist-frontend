@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from "react-router-dom";
 import { useGetWishlistInfo } from "../wishlistAPI";
 import { TextField } from "@mui/material";
-import { Wishlist } from "../wishlist.dto";
+import { Wishlist, WishlistAccessType } from "../wishlist.dto";
 import { useContext, useState } from "react";
 import { GiftList } from "../../gifts/ui/GiftList";
 import { ChangeWishlistAccess, ChangeWishlistTitle } from "./WishlistUpdateInfoElements";
