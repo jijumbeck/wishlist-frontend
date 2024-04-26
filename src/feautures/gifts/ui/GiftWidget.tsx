@@ -105,7 +105,7 @@ export function GiftCardPage({ gift }: { gift: Gift }) {
                     <p>Описание: {gift.description}</p>
                     {gift.URL ? <a href={gift.URL}>Ссылка на подарок</a> : null}
                     {gift.price ? <p>Цена: {gift.price}</p> : null}
-                    <AddGift />
+                    <AddGift gift={gift} />
                     {
                         relationStatus === UserRelationStatus.Friend ? <ReservationCardComponent gift={gift} /> : null
                     }

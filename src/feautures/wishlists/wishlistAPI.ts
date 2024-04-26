@@ -84,6 +84,15 @@ export const wishlistAPI = createApi({
                 // TO DO:
                 //return [{ type: 'GiftsInWishlist', id: result.wishlistId }];
             }
+        }),
+
+        addOtherGift: builder.mutation<Gift, { wishlistId: string, giftId: string }>({
+            query: (param) => ({
+                url: 'wishlist/addOtherGift',
+                method: 'POST',
+                body: param
+            }),
+            invalidatesTags: (result, error, param) => [{ type: 'GiftsInWishlist', id: param.wishlistId }]
         })
     })
 })
@@ -96,3 +105,4 @@ export const useGetPublicWishlists = wishlistAPI.endpoints.getPublicWishlists.us
 export const useCreateWishlist = wishlistAPI.endpoints.createWishlist.useMutation;
 export const useAddGift = wishlistAPI.endpoints.addGift.useMutation;
 export const useUpdateWishlist = wishlistAPI.endpoints.updateWishlistInfo.useMutation;
+export const useAddOtherGift = wishlistAPI.endpoints.addOtherGift.useMutation;

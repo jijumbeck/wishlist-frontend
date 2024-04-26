@@ -4,7 +4,7 @@ import { CreateGiftButton, GiftPreview, GiftPreviewForFriend } from "./GiftPrevi
 import { useContext } from "react";
 import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
 import { useAddGiftRights } from "../useAddGiftRight";
-import { Wishlist } from "../../wishlists/wishlist.dto";
+import { Wishlist, WishlistAccessType } from "../../wishlists/wishlist.dto";
 
 
 export function GiftList({ wishlist }: { wishlist: Wishlist }) {
@@ -28,7 +28,7 @@ export function GiftList({ wishlist }: { wishlist: Wishlist }) {
         >
             {wishlist && hasRights ? <CreateGiftButton wishlist={wishlist} /> : null}
             {
-                relationStatus === UserRelationStatus.Friend
+                relationStatus === UserRelationStatus.Friend && wishlist.wishlistAccess === WishlistAccessType.ForFriends
                     ? (gifts && gifts.length > 0
                         ? gifts.map(gift => <GiftPreviewForFriend key={gift.id} gift={gift} />)
                         : <p>Подарков нет.</p>)

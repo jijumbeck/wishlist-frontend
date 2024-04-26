@@ -1,13 +1,15 @@
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { useGetProfileInfo } from "../../profile/profileAPI";
-import { useGetWishlists } from "../../wishlists/wishlistAPI";
+import { useAddOtherGift, useGetWishlists } from "../../wishlists/wishlistAPI";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useState } from "react";
+import { Gift } from "../gift.dto";
 
 
-export function AddGift() {
+export function AddGift({ gift }: { gift: Gift }) {
     const user = useGetProfileInfo({}).data;
     const wishlists = useGetWishlists(user ? user.id : 'undefined').data;
+    const [addOtherGift, metadata] = useAddOtherGift();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -47,7 +49,9 @@ export function AddGift() {
                                 }}
                             >
                                 {wishlist.title}
-                                <IconButton>
+                                <IconButton
+                                    onClick={() => addOtherGift({ wishlistId: wishlist.id, giftId: gift.id })}
+                                >
                                     <AddCircleOutlineIcon />
                                 </IconButton>
                             </MenuItem>))
