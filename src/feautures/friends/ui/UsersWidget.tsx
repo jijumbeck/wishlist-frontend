@@ -1,6 +1,6 @@
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGetProfileInfo, useGetUsersBySearch } from "../../profile/profileAPI";
 import { UserInfo } from "../../profile/profile.dto";
 import { FriendButton } from "./FriendButtons";
@@ -73,7 +73,7 @@ export function UsersWidget() {
 function UserLine({ user }: { user: UserInfo }) {
     return (
         <div style={{ width: '400px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {user.login}
+            <Link to={`/${user.id}`} >{user.login}</Link>
             <FriendButton userId={user.id} />
         </div>
     )

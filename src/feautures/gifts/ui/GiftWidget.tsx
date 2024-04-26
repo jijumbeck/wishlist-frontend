@@ -109,21 +109,40 @@ export function GiftCardPage({ gift }: { gift: Gift }) {
                     {
                         relationStatus === UserRelationStatus.Friend ? <ReservationCardComponent gift={gift} /> : null
                     }
+                    {
+                        relationStatus === UserRelationStatus.Friend ? <Propmts /> : null
+                    }
                 </div>
             </div>
         </>
     )
 }
 
-function ReserveButton({ gift }: { gift: Gift }) {
-    const [reserveGift, metadata] = useReserveGift();
+function Propmts() {
+    const prompts = ['Связано ли это с каким-то воспоминанием?', 'Может добавить вкусняшек?', 'Подпишите открытку!'];
 
     return (
-        <Button
-            variant="outlined"
-            onClick={() => reserveGift(gift.id)}
+        <div
+            style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '20px'
+            }}
         >
-            Зарезервировать
-        </Button>
+            {
+                prompts.map(text => (
+                    <p 
+                        style={{
+                            padding: '5px 5px',
+                            margin: '0',
+                            backgroundColor: '#c37ede',
+                            borderRadius: '10px'
+                        }}
+                    >
+                        {text}
+                    </p>
+                ))
+            }
+        </div>
     )
 }

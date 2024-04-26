@@ -7,7 +7,7 @@ import { UserInfo } from '../profile/profile.dto';
 export const friendApi = createApi({
     reducerPath: 'friendApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['friend'],
+    tagTypes: ['Friend'],
     endpoints: (builder) => ({
 
         getFriends: builder.query<UserInfo[], string>({
@@ -31,7 +31,8 @@ export const friendApi = createApi({
         getRequest: builder.query<FriendshipRequest, string>({
             query: (userId: string) => ({
                 url: `friendship/getFriendshipStatus?userId=${userId}`
-            })
+            }),
+            providesTags: (result, error, id) => [{ type: 'Friend', id }]
         }),
 
         addFriend: builder.mutation<string, string>({
@@ -39,7 +40,8 @@ export const friendApi = createApi({
                 method: 'POST',
                 url: 'friendship/addFriend',
                 body: { requestRecieverId: userId }
-            })
+            }),
+            invalidatesTags: (result, error, id) => [{ type: 'Friend', id }]
         }),
 
         deleteFriend: builder.mutation<string, string>({
@@ -47,7 +49,8 @@ export const friendApi = createApi({
                 method: 'POST',
                 url: 'friendship/deleteFriend',
                 body: { friendToDeleteId: userId }
-            })
+            }),
+            invalidatesTags: (result, error, id) => [{ type: 'Friend', id }]
         })
     })
 });
