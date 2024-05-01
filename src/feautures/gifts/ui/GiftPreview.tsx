@@ -8,6 +8,7 @@ import { useAddGift } from "../../wishlists/wishlistAPI";
 import { Wishlist } from "../../wishlists/wishlist.dto";
 import { IconButton } from "@mui/material";
 import { useGetGiftReservations, useGetReservations, useRemoveReservation, useReserveGift } from "../reservationAPI";
+import { IMAGE_API } from "../../../shared/api";
 
 
 export function GiftPreview({ gift }: { gift: Gift }) {
@@ -21,6 +22,11 @@ export function GiftPreview({ gift }: { gift: Gift }) {
             }}
         >
             <div className="gift-image shadow">
+                {
+                    gift.imageURL
+                        ? <img src={`${IMAGE_API}/${gift.imageURL}`} />
+                        : null
+                }
             </div>
             {gift.title}
         </div>

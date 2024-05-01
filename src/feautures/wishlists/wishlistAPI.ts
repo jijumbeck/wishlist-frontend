@@ -11,7 +11,7 @@ export const wishlistAPI = createApi({
 
         getUserWishlists: builder.query<Wishlist[], string>({
             query: (userId: string) => ({
-                url: `wishlist/getWishlists?ownerId=${userId}`
+                url: `wishlists?ownerId=${userId}`
             }),
             providesTags: (result) => {
                 console.log(result);
@@ -22,13 +22,13 @@ export const wishlistAPI = createApi({
         }),
 
         getPublicWishlists: builder.query<Wishlist[], string>({
-            query: (search: string) => `wishlist/publicWishlists?search=${search}`
+            query: (search: string) => `wishlists/public?search=${search}`
         }),
 
         createWishlist: builder.mutation<Wishlist, void>({
             query: () => ({
                 method: 'POST',
-                url: 'wishlist/create'
+                url: 'wishlist'
             }),
             invalidatesTags: (result) => {
                 console.log(result);
@@ -61,7 +61,7 @@ export const wishlistAPI = createApi({
         }),
 
         getWishlistGifts: builder.query<Gift[], string>({
-            query: (wishlistId: string) => `wishlist/getGifts?wishlistId=${wishlistId}`,
+            query: (wishlistId: string) => `wishlist-gifts?wishlistId=${wishlistId}`,
             providesTags: (result, error, id) => {
                 console.log('gwtWishlistGifts', id);
                 return [{ type: 'GiftsInWishlist', id }]
@@ -70,7 +70,7 @@ export const wishlistAPI = createApi({
 
         addGift: builder.mutation<Gift, string>({
             query: (wishlistId: string) => ({
-                url: `wishlist/addGift`,
+                url: `wishlist-gifts`,
                 method: 'POST',
                 body: { wishlistId: wishlistId }
             }),
@@ -88,7 +88,7 @@ export const wishlistAPI = createApi({
 
         addOtherGift: builder.mutation<Gift, { wishlistId: string, giftId: string }>({
             query: (param) => ({
-                url: 'wishlist/addOtherGift',
+                url: 'wishlist-gifts',
                 method: 'POST',
                 body: param
             }),

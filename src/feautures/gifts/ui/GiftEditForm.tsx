@@ -1,9 +1,15 @@
-import { Button, TextField } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import { Gift } from "../gift.dto";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useId, useReducer, useRef, useState } from "react";
 import { LoadingButton } from "@mui/lab";
-import { useChangeGift, useDeleteGift } from "../giftAPI";
+import { useChangeGift, useDeleteGift, useUploadGiftImage } from "../giftAPI";
 import { useNavigate } from "react-router-dom";
+import AddIcon from '@mui/icons-material/Add';
+import { ref } from "yup";
+import { IMAGE_API } from "../../../shared/api";
+import CheckIcon from '@mui/icons-material/Check';
+
+
 
 export function EditGiftForm({ gift }: { gift: Gift }) {
     const [url, setUrl] = useState(gift.URL ?? '');
@@ -113,6 +119,140 @@ export function EditGiftForm({ gift }: { gift: Gift }) {
             >
                 Удалить
             </Button>
+        </form>
+    )
+}
+
+
+
+export function EditGiftImage({ gift }: { gift: Gift }) {
+    const imageRef = useRef<HTMLImageElement>(null);
+    const [imgSrc, setImgSrc] = useState(gift.imageURL ? `${IMAGE_API}/${gift.imageURL}` : '');
+    const [file, setFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        if (imageRef.current && file) {
+            console.log(file);
+            const fileReader = new FileReader();
+            const url = fileReader.readAsDataURL(file);
+
+            fileReader.onloadend = function (e) {
+                console.log(e);
+                setImgSrc(fileReader.result ? fileReader.result.toString() : '');
+            }
+        }
+    }, [file]);
+
+
+    return (
+        <div
+            className="gift-page__image"
+            style={{
+                position: 'relative'
+            }}
+        >
+            <div
+                style={{
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    justifyContent: 'end',
+                    gap: '20px',
+                    height: '100%',
+                    width: '100%',
+                    padding: '10px'
+                }}
+            >
+                <EditGiftImageButton
+                    setFile={setFile}
+                />
+                {
+                    file ? <SaveImageButton gift={gift} file={file} /> : null
+                }
+            </div>
+            {
+                file || imgSrc
+                    ? (<img
+                        src={imgSrc}
+                        ref={imageRef}
+                        alt="Изображение подарка"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }}
+                    />)
+                    : (
+                        <div>
+                            <p>CTRL + V</p>
+                            <p>или</p>
+                            <p>Перетащи сюда</p>
+                            <p>или</p>
+                            <p>Нажми на плюс</p>
+                        </div>
+                    )
+            }
+
+        </div>
+    )
+}
+
+function SaveImageButton({ gift, file }: { gift: Gift, file: File }) {
+    const [uploadImage, metadata] = useUploadGiftImage();
+
+    function handleClick() {
+        const formData = new FormData();
+        formData.append('giftId', gift.id);
+        formData.append('giftImage', file);
+        uploadImage(formData);
+    }
+
+    return (
+        <IconButton
+            style={{
+                backgroundColor: '#fff',
+            }}
+            onClick={handleClick}
+        >
+            <CheckIcon />
+        </IconButton>
+    )
+}
+
+function EditGiftImageButton(props: {
+    setFile: (a: File | null) => void
+}) {
+    const id = useId();
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    return (
+        <form>
+            <IconButton
+                style={{
+                    backgroundColor: '#fff',
+                }}
+                onClick={() => {
+                    if (inputRef) {
+                        inputRef.current?.click();
+                    }
+                }}
+            >
+                <AddIcon />
+            </IconButton>
+            <label htmlFor={id}>
+                <input
+                    id={id}
+                    ref={inputRef}
+                    style={{
+                        display: 'none'
+                    }}
+                    type="file"
+                    accept="image/png, image/jpeg"
+                    onChange={e => {
+                        props.setFile(e.target.files?.[0] ? e.target.files?.[0] : null);
+                    }}
+                />
+            </label>
         </form>
     )
 }

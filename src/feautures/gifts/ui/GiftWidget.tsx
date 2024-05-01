@@ -1,15 +1,13 @@
 import { Link, useLoaderData } from "react-router-dom";
 import { Gift } from "../gift.dto";
 import { useChangeGift, useGetGift } from "../giftAPI";
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { useContext, useState } from "react";
 import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from '@mui/icons-material/Send';
-import { EditGiftForm } from "./GiftEditForm";
-import { useGetReservations, useReserveGift } from "../reservationAPI";
+import { EditGiftForm, EditGiftImage } from "./GiftEditForm";
 import { AddGift } from "./AddGift";
-import { useGetFriends } from "../../friends/friendAPI";
 import { ReservationCardComponent } from "./GiftPreview";
 
 
@@ -81,12 +79,13 @@ function EditGiftWidget({ gift }: { gift: Gift }) {
             <GiftTitle gift={gift} />
 
             <div style={{ display: 'flex', gap: '20px', margin: '40px' }}>
-                <div className="gift-image"></div>
+                <EditGiftImage gift={gift} />
                 <EditGiftForm gift={gift} />
             </div>
         </>
     )
 }
+
 
 export function GiftCardPage({ gift }: { gift: Gift }) {
     const relationStatus = useContext(UserRelationStatusContext);
@@ -131,7 +130,7 @@ function Propmts() {
         >
             {
                 prompts.map(text => (
-                    <p 
+                    <p
                         style={{
                             padding: '5px 5px',
                             margin: '0',

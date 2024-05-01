@@ -2,6 +2,7 @@ import { fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@re
 import { checkAuth, logout } from "../feautures/auth/auth.slice";
 
 export const API = 'http://localhost:5000/api';
+export const IMAGE_API = 'http://localhost:5000';
 
 const baseQuery = fetchBaseQuery({
     baseUrl: API,

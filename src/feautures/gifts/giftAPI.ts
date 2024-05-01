@@ -33,6 +33,15 @@ export const giftApi = createApi({
                 body: gift
             }),
             invalidatesTags: (result, error, gift) => [{ type: 'Gift', id: gift.id }, { type: 'GiftsInWishlist', id: gift.wishlistId }]
+        }),
+
+        uploadGiftImage: builder.mutation<void, FormData>({
+            query: (formData) => ({
+                url: 'gift/uploadImage',
+                method: 'POST',
+                body: formData
+            }),
+            invalidatesTags: (result, error, formData) => [{ type: 'Gift', id: formData.get('giftId')?.toString() ?? '' }]
         })
     })
 })
@@ -40,3 +49,4 @@ export const giftApi = createApi({
 export const useGetGift = giftApi.endpoints.getGift.useQuery;
 export const useDeleteGift = giftApi.endpoints.deleteGift.useMutation;
 export const useChangeGift = giftApi.endpoints.changeGiftInfo.useMutation;
+export const useUploadGiftImage = giftApi.endpoints.uploadGiftImage.useMutation;
