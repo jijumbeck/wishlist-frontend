@@ -3,6 +3,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import React from "react";
 import { Notification, NotificationType, useGetNotifications } from "./notificationAPI";
 import { useGetUserInfo } from "../profile/profileAPI";
+import { useAddCoauthor } from "../wishlists/coauthoringAPI";
 
 
 export function Notifications() {
@@ -60,7 +61,7 @@ function NotificationMenuItem({ notification }: { notification: Notification }) 
         return <FriendNotification userId={String(notification.requestSenderId)} />
     }
 
-    return <CoauthorNotification />
+    return <CoauthorNotification notification={notification} />
 }
 
 function FriendNotification({ userId }: { userId: string }) {
@@ -92,12 +93,15 @@ function FriendNotification({ userId }: { userId: string }) {
     )
 }
 
-function CoauthorNotification() {
+function CoauthorNotification({ notification }: { notification: Notification }) {
+    const [addCoauthor, metadata] = useAddCoauthor();
+
     return (
         <MenuItem>
             Запрос на соавторство
             <Button
                 variant="outlined"
+                onClick={() => addCoauthor({ coauthorId: notification.requestReceiverId, wishlistId: notification.data?.wishlistId })}
             >
                 Принять
             </Button>

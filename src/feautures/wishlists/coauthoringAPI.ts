@@ -5,7 +5,7 @@ import { UserInfo } from "../profile/profile.dto";
 export const coauthoringApi = createApi({
     reducerPath: 'coauthoringApi',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Coauthoring', 'Wishlist'],
+    tagTypes: ['Coauthoring', 'Wishlist', 'WishlistForUser'],
     endpoints: (builder) => ({
 
         getCoauthors: builder.query<UserInfo[], string>({
@@ -21,7 +21,7 @@ export const coauthoringApi = createApi({
                 method: 'POST',
                 body: param
             }),
-            invalidatesTags: () => ['Coauthoring']
+            invalidatesTags: (result, error, param) => ['Coauthoring', { type: 'WishlistForUser', id: param.coauthorId }]
         }),
 
         removeCoauthor: builder.mutation<void, { coauthorId: string, wishlistId: string }>({
