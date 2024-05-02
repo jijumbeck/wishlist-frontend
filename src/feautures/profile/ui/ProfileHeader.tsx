@@ -7,17 +7,7 @@ export function ProfileHeader({ user }: { user: UserInfo }) {
         <div style={{
             display: 'flex'
         }}>
-            <img
-                src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-                alt="Аватарка профиля пользователя"
-                style={{
-                    width: '100px',
-                    height: '100px',
-                    borderRadius: '50%',
-                    border: '3px solid',
-                    margin: '0 0 0 50px'
-                }}
-            />
+            <UserImage user={user} />
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -30,6 +20,52 @@ export function ProfileHeader({ user }: { user: UserInfo }) {
                 <FriendProfileComponent userId={user.id} />
                 <ProfileHeaderButton user={user} />
             </div>
+        </div>
+    )
+}
+
+function UserImage({ user }: { user: UserInfo }) {
+    const isImageExists = false;
+
+    if (isImageExists) {
+        return (
+            <img
+                src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                alt="Аватарка профиля пользователя"
+                style={{
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '50%',
+                    border: '3px solid',
+                    margin: '0 0 0 50px'
+                }}
+            />
+        )
+    }
+
+    return (
+        <div
+            style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '50%',
+                border: '3px solid',
+                margin: '0 0 0 50px',
+                backgroundColor: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}
+        >
+            <p
+                style={{
+                    fontSize: '54px',
+                    textTransform: 'uppercase',
+                    margin: '0'
+                }}
+            >
+                {user.login[0]}
+            </p>
         </div>
     )
 }
