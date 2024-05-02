@@ -1,12 +1,14 @@
+import { createContext, useState } from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { useGetWishlistInfo } from "../wishlistAPI";
 import { TextField } from "@mui/material";
-import { Wishlist, WishlistAccessType } from "../wishlist.dto";
-import { useContext, useState } from "react";
+
+
+import { useGetWishlistInfo } from "../wishlistAPI";
+import { Wishlist } from "../wishlist.dto";
 import { GiftList } from "../../gifts/ui/GiftList";
 import { ChangeWishlistAccess, ChangeWishlistTitle } from "./WishlistUpdateInfoElements";
 import { CoauthoringMenu } from "./Coauthoring";
-import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
+import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
 
 
 export async function wishlstIdLoader({ params }: { params: any }) {
@@ -14,11 +16,11 @@ export async function wishlstIdLoader({ params }: { params: any }) {
     return wishlistId;
 }
 
+export const WishlistContext = createContext<Wishlist | null>(null);
+
 export function WishlistWidget() {
     const wishlistId = useLoaderData() as string;
     const wishlist = useGetWishlistInfo(wishlistId).data;
-
-    const relationStatus = useContext(UserRelationStatusContext);
 
     if (!wishlist) {
         return (<p>Загрузка...</p>)
@@ -26,18 +28,30 @@ export function WishlistWidget() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {
-                relationStatus === UserRelationStatus.Me
-                    ? <>
-                        <WishlistTitleInput wishlist={wishlist} />
-                        <CoauthoringMenu wishlist={wishlist} />
-                    </>
-                    : <div style={{ fontSize: '32px', textAlign: 'start' }}>
-                        <Link to={`/${wishlist.creatorId}`}>...</Link>
-                        {' / '}{wishlist.title}
-                    </div>
-            }
-            <GiftList wishlist={wishlist} />
+            <WishlistContext.Provider value={wishlist}>
+                <WithUserRelation
+                    renderMe={() => (
+                        <>
+                            <WishlistTitleInput wishlist={wishlist} />
+                            <CoauthoringMenu wishlist={wishlist} />
+                        </>
+                    )}
+                    renderFriend={() => (
+                        <div style={{ fontSize: '32px', textAlign: 'start' }}>
+                            <Link to={`/${wishlist.creatorId}`}>...</Link>
+                            {' / '}{wishlist.title}
+                        </div>
+                    )}
+                    renderNone={() => (
+                        <div style={{ fontSize: '32px', textAlign: 'start' }}>
+                            <Link to={`/${wishlist.creatorId}`}>...</Link>
+                            {' / '}{wishlist.title}
+                        </div>
+                    )}
+                />
+
+                <GiftList wishlist={wishlist} />
+            </WishlistContext.Provider>
         </div>
     )
 }

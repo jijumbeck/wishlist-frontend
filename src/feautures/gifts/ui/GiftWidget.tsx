@@ -3,12 +3,15 @@ import { Gift } from "../gift.dto";
 import { useChangeGift, useGetGift } from "../giftAPI";
 import { TextField } from "@mui/material";
 import { useContext, useState } from "react";
-import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
+import { UserRelationStatus } from "../../profile/ui/ProfileWidget";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from '@mui/icons-material/Send';
 import { EditGiftForm, EditGiftImage } from "./GiftEditForm";
 import { AddGift } from "./AddGift";
 import { ReservationCardComponent } from "./GiftPreview";
+import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
+import { WishlistContext } from "../../wishlists/ui/WishlistWidget";
+import { WishlistAccessType } from "../../wishlists/wishlist.dto";
 
 
 export function giftIdLoader({ params }: { params: any }) {
@@ -20,7 +23,6 @@ export function GiftWidget() {
     const giftId = useLoaderData() as string;
     const gift = useGetGift(giftId).data;
 
-    const relationStatus = useContext(UserRelationStatusContext);
 
     if (!gift) {
         return (<p>Загрузка...</p>)
@@ -29,11 +31,11 @@ export function GiftWidget() {
     return (
         <div className="gift-page">
 
-            {
-                relationStatus === UserRelationStatus.Me
-                    ? <EditGiftWidget gift={gift} />
-                    : <GiftCardPage gift={gift} />
-            }
+            <WithUserRelation
+                renderMe={() => <EditGiftWidget gift={gift} />}
+                renderFriend={() => <GiftCardPage gift={gift} />}
+                renderNone={() => <GiftCardPage gift={gift} />}
+            />
         </div>
     )
 }
@@ -88,7 +90,7 @@ function EditGiftWidget({ gift }: { gift: Gift }) {
 
 
 export function GiftCardPage({ gift }: { gift: Gift }) {
-    const relationStatus = useContext(UserRelationStatusContext);
+    const wishlist = useContext(WishlistContext);
 
     return (
         <>
@@ -106,10 +108,12 @@ export function GiftCardPage({ gift }: { gift: Gift }) {
                     {gift.price ? <p>Цена: {gift.price}</p> : null}
                     <AddGift gift={gift} />
                     {
-                        relationStatus === UserRelationStatus.Friend ? <ReservationCardComponent gift={gift} /> : null
-                    }
-                    {
-                        relationStatus === UserRelationStatus.Friend ? <Propmts /> : null
+                        wishlist?.wishlistAccess === WishlistAccessType.ForFriends || wishlist?.wishlistAccess === WishlistAccessType.Custom
+                            ? (<>
+                                <ReservationCardComponent gift={gift} />
+                                <Propmts />
+                            </>)
+                            : null
                     }
                 </div>
             </div>

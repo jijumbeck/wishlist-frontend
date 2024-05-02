@@ -2,9 +2,11 @@ import { useLoaderData } from "react-router-dom";
 import { useGetWishlistInfo, useGetWishlistsGifts } from "../../wishlists/wishlistAPI";
 import { CreateGiftButton, GiftPreview, GiftPreviewForFriend } from "./GiftPreview";
 import { useContext } from "react";
-import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
+import { UserRelationStatus } from "../../profile/ui/ProfileWidget";
 import { useAddGiftRights } from "../useAddGiftRight";
 import { Wishlist, WishlistAccessType } from "../../wishlists/wishlist.dto";
+import { UserRelationStatusContext } from "../../profile/helpers/useUserRelation";
+import { Gift } from "../gift.dto";
 
 
 export function GiftList({ wishlist }: { wishlist: Wishlist }) {
@@ -27,6 +29,7 @@ export function GiftList({ wishlist }: { wishlist: Wishlist }) {
             }}
         >
             {wishlist && hasRights ? <CreateGiftButton wishlist={wishlist} /> : null}
+
             {
                 relationStatus === UserRelationStatus.Friend && wishlist.wishlistAccess === WishlistAccessType.ForFriends
                     ? (gifts && gifts.length > 0
@@ -37,5 +40,15 @@ export function GiftList({ wishlist }: { wishlist: Wishlist }) {
                         : <p>Подарков нет.</p>)
             }
         </div>
+    )
+}
+
+export function GiftListForFriends({ gifts }: { gifts: Gift[] }) {
+    return (
+        <>
+            {
+                
+            }
+        </>
     )
 }

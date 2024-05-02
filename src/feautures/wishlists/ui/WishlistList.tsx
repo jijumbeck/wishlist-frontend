@@ -1,16 +1,15 @@
-import { useContext } from "react";
-import { UserRelationStatus, UserRelationStatusContext } from "../../profile/ui/ProfileWidget";
 import { useLoaderData } from "react-router-dom";
+
 import { useGetWishlists } from "../wishlistAPI";
 import { CreateWishlistButton, WishlistPreview } from "./WishlistPreview";
 import { ReservationPreview } from "../../gifts/ui/Reservation";
+import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
+
 
 export function WishlistListWidget() {
     const userId = useLoaderData() as string;
     console.log(userId);
     const { data } = useGetWishlists(userId);
-
-    const userRelationStatus = useContext(UserRelationStatusContext);
 
     if (!data) {
         return <p>Загрузка...</p>
@@ -26,7 +25,16 @@ export function WishlistListWidget() {
                 justifyContent: 'center'
             }}
         >
-            {userRelationStatus === UserRelationStatus.Me && (<><CreateWishlistButton /> <ReservationPreview /></>)}
+            <WithUserRelation
+                renderMe={() => (
+                    <>
+                        <CreateWishlistButton />
+                        <ReservationPreview />
+                    </>
+                )}
+                renderFriend={() => <></>}
+                renderNone={() => <></>}
+            />
             {
                 data && data.length > 0
                     ? data.map(wishlist => <WishlistPreview key={wishlist.id} wishlist={wishlist} />)
