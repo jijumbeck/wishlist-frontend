@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { ref } from "yup";
 import { IMAGE_API } from "../../../shared/api";
 import CheckIcon from '@mui/icons-material/Check';
+import { ConnectedTvOutlined } from "@mui/icons-material";
 
 
 
@@ -129,6 +130,7 @@ export function EditGiftImage({ gift }: { gift: Gift }) {
     const imageRef = useRef<HTMLImageElement>(null);
     const [imgSrc, setImgSrc] = useState(gift.imageURL ? `${IMAGE_API}/${gift.imageURL}` : '');
     const [file, setFile] = useState<File | null>(null);
+    usePasteImage({ setFile });
 
     useEffect(() => {
         if (imageRef.current && file) {
@@ -236,6 +238,9 @@ function EditGiftImageButton(props: {
                         inputRef.current?.click();
                     }
                 }}
+                onKeyDown={e => {
+                    console.log(e.key);
+                }}
             >
                 <AddIcon />
             </IconButton>
@@ -251,8 +256,33 @@ function EditGiftImageButton(props: {
                     onChange={e => {
                         props.setFile(e.target.files?.[0] ? e.target.files?.[0] : null);
                     }}
+                    onPaste={e => console.log('onPaste')}
                 />
             </label>
         </form>
     )
+}
+
+function usePasteImage(props: {
+    setFile: (a: File | null) => void
+}) {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const handlePaste = (e: ClipboardEvent) => {
+            const items = e.clipboardData?.items;
+
+            if (items) {
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf("image") === 0) {
+                        props.setFile(items[i].getAsFile());
+                        return;
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('paste', handlePaste);
+        return () => document.removeEventListener('paste', handlePaste);
+    }, []);
 }
