@@ -19,6 +19,13 @@
     width: calc(180px - 2 * 20px);
 }
 
+.gift-card p {
+    margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .shadow {
     box-shadow: inset 0 0 10px 10px #00000048;
 }

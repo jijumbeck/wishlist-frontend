@@ -3,6 +3,7 @@ import { baseQueryWithReauth } from "../../shared/api";
 import { Wishlist } from "./wishlist.dto";
 import { Gift } from "../gifts/gift.dto";
 
+
 export const wishlistAPI = createApi({
     reducerPath: 'wishlistApi',
     baseQuery: baseQueryWithReauth,
@@ -14,7 +15,6 @@ export const wishlistAPI = createApi({
                 url: `wishlists?ownerId=${userId}`
             }),
             providesTags: (result) => {
-                console.log(result);
                 return result && result.length > 0
                     ? [{ type: 'WishlistForUser', id: result[0].creatorId }]
                     : ['WishlistForUser']
@@ -31,7 +31,6 @@ export const wishlistAPI = createApi({
                 url: 'wishlist'
             }),
             invalidatesTags: (result) => {
-                console.log(result);
                 return [{ type: 'WishlistForUser', id: result?.creatorId }]
             }
         }),
@@ -63,8 +62,7 @@ export const wishlistAPI = createApi({
         getWishlistGifts: builder.query<Gift[], string>({
             query: (wishlistId: string) => `wishlist-gifts?wishlistId=${wishlistId}`,
             providesTags: (result, error, id) => {
-                console.log('gwtWishlistGifts', id);
-                return [{ type: 'GiftsInWishlist', id }]
+                return [{ type: 'GiftsInWishlist', id: id }]
             }
         }),
 
@@ -79,10 +77,7 @@ export const wishlistAPI = createApi({
                     return ['GiftsInWishlist'];
                 }
 
-                return ['GiftsInWishlist']
-
-                // TO DO:
-                //return [{ type: 'GiftsInWishlist', id: result.wishlistId }];
+                return [{ type: 'GiftsInWishlist', id: result.wishlistId }];
             }
         }),
 

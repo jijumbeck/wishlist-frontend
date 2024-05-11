@@ -21,7 +21,12 @@ export function AddGift({ gift }: { gift: Gift }) {
     };
 
     return (
-        <div>
+        <div
+            style={{
+                alignSelf: 'flex-start',
+                margin: '10px 0'
+            }}
+        >
             <Button
                 id="add-gift-button"
                 variant="outlined"
@@ -45,10 +50,20 @@ export function AddGift({ gift }: { gift: Gift }) {
                                 key={wishlist.id}
                                 sx={{
                                     display: 'flex',
-                                    justifyContent: 'space-between'
+                                    justifyContent: 'space-between',
+                                    width: '300px'
                                 }}
                             >
-                                {wishlist.title}
+                                <p
+                                    style={{
+                                        margin: '0',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden'
+                                    }}
+                                >
+                                    {wishlist.title}
+                                </p>
                                 <IconButton
                                     onClick={() => addOtherGift({ wishlistId: wishlist.id, giftId: gift.id })}
                                 >

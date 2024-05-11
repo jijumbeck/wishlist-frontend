@@ -1,12 +1,12 @@
 import { Link, useLoaderData } from "react-router-dom";
 import { Gift } from "../gift.dto";
-import { useChangeGift, useGetGift } from "../giftAPI";
+import { useChangeGift, useDeleteGift, useGetGift } from "../giftAPI";
 import { TextField } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { UserRelationStatus } from "../../profile/ui/ProfileWidget";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from '@mui/icons-material/Send';
-import { EditGiftForm, EditGiftImage } from "./GiftEditForm";
+import { EditGift, EditGiftForm, EditGiftImage } from "./GiftEditForm";
 import { AddGift } from "./AddGift";
 import { ReservationCardComponent } from "./GiftPreview";
 import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
@@ -23,7 +23,6 @@ export function GiftWidget() {
     const giftId = useLoaderData() as string;
     const gift = useGetGift(giftId).data;
 
-
     if (!gift) {
         return (<p>Загрузка...</p>)
     }
@@ -32,13 +31,14 @@ export function GiftWidget() {
         <div className="gift-page">
 
             <WithUserRelation
-                renderMe={() => <EditGiftWidget gift={gift} />}
+                renderMe={() => <EditGift gift={gift} />}
                 renderFriend={() => <GiftCardPage gift={gift} />}
                 renderNone={() => <GiftCardPage gift={gift} />}
             />
         </div>
     )
 }
+
 
 export function GiftTitle({ gift }: { gift: Gift }) {
     const [title, setTitle] = useState(gift.title);
@@ -75,14 +75,21 @@ export function GiftTitle({ gift }: { gift: Gift }) {
     )
 }
 
+
 function EditGiftWidget({ gift }: { gift: Gift }) {
     return (
         <>
-            <GiftTitle gift={gift} />
+            <div
+                style={{
+                    display: 'flex'
+                }}
+            >
+                <GiftTitle gift={gift} />
+            </div>
 
             <div style={{ display: 'flex', gap: '20px', margin: '40px' }}>
                 <EditGiftImage gift={gift} />
-                <EditGiftForm gift={gift} />
+                {/* <EditGiftForm gift={gift} /> */}
             </div>
         </>
     )

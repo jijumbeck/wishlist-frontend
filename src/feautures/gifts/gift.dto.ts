@@ -5,10 +5,24 @@ export interface Gift {
     URL?: string;
     imageURL?: string;
     price?: number;
+    currency?: string;
     description?: string;
 
     userId: string;
     wishlistId: string;
+}
+
+export const giftExample = {
+    id: '1',
+    title: '',
+    URL: '',
+    imageURL: '',
+    price: 0,
+    currency: '',
+    description: '',
+
+    userId: '',
+    wishlistId: ''
 }
 
 export interface Reservation {

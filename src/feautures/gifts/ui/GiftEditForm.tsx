@@ -1,23 +1,76 @@
-import { Button, IconButton, TextField } from "@mui/material";
-import { Gift } from "../gift.dto";
 import { useEffect, useId, useReducer, useRef, useState } from "react";
+import { Button, IconButton, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useChangeGift, useDeleteGift, useUploadGiftImage } from "../giftAPI";
-import { useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
-import { ref } from "yup";
-import { IMAGE_API } from "../../../shared/api";
 import CheckIcon from '@mui/icons-material/Check';
-import { ConnectedTvOutlined } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+
+import { Gift, giftExample } from "../gift.dto";
+import { useChangeGift, useDeleteGift, useGetUrlGift, useUploadGiftImage } from "../giftAPI";
+import { IMAGE_API } from "../../../shared/api";
+import { AddGift } from "./AddGift";
 
 
+// Widget for editing gift.
 
-export function EditGiftForm({ gift }: { gift: Gift }) {
-    const [url, setUrl] = useState(gift.URL ?? '');
-    const [description, setDescription] = useState(gift.description ?? '');
+export function EditGift({ gift }: { gift: Gift }) {
+    const [giftState, dispatch] = useReducer(function (state: Gift, action: Partial<Gift>) {
+        return {
+            ...state,
+            ...action,
+            id: state.id
+        } as Gift
+    }, gift);
 
-    const [price, setPrice] = useState(gift.price ?? 0);
-    const [priceError, setPriceError] = useState('');
+    const [urlGift, setGiftInfoByUrl] = useState<Partial<Gift>>({});
+
+
+    return (
+        <>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
+                }}
+            >
+                <div style={{ marginRight: 'auto' }}>
+                    <EditGift.Title gift={giftState} setTitle={(newTitle) => dispatch({ title: newTitle })} />
+                </div>
+                <DeleteGiftButton gift={gift} />
+                <SaveChangesButton gift={gift} newGiftInfo={giftState} />
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    gap: '20px',
+                    margin: '40px'
+                }}>
+
+                <EditGiftImage gift={giftState} />
+
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '50%',
+                        gap: '10px'
+                    }}>
+
+                    <GiftURL gift={giftState} setUrl={(url) => dispatch({ URL: url })} urlGift={urlGift} setUrlGift={setGiftInfoByUrl} dispatch={dispatch} />
+                    <EditGiftForm gift={giftState} dispatch={dispatch} />
+                    <AddGift gift={gift} />
+                </div>
+            </div>
+        </>
+    )
+}
+
+
+// Form for editing gift fields.
+
+export function EditGiftForm({ gift, dispatch }: { gift: Gift, dispatch: (params: Partial<Gift>) => any }) {
+
     const handleNewPrice = (newPrice: string) => {
         try {
             const price = Number(newPrice);
@@ -30,49 +83,23 @@ export function EditGiftForm({ gift }: { gift: Gift }) {
         return false;
     }
 
-    const [changeGiftInfo, metadata] = useChangeGift();
-
-    const [deleteGift, metadataForDelete] = useDeleteGift();
-    const navigate = useNavigate();
-
-
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                changeGiftInfo({ ...gift, URL: url, price, description })
-            }}
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                width: '50%'
-            }}
-        >
-            <TextField
-                id="url"
-                name="url"
-                label="URL"
-                placeholder="Ссылка на подарок"
-                value={url}
-                onChange={e => setUrl(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-
+        <>
             <TextField
                 id='price'
                 name='price'
                 label='Цена'
                 type='number'
-                value={price}
+                value={gift.price}
                 onChange={e => {
                     if (handleNewPrice(e.target.value)) {
-                        setPrice(Number(e.target.value));
+                        dispatch({ price: Number(e.target.value) })
                     }
                 }}
                 fullWidth
-                margin="normal"
+                InputProps={{
+                    sx: { borderRadius: '10px' }
+                }}
             />
 
             <TextField
@@ -81,54 +108,24 @@ export function EditGiftForm({ gift }: { gift: Gift }) {
                 label="Описание"
                 placeholder="Описание"
                 multiline
-                maxRows={5}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                maxRows={3}
+                value={gift.description}
+                onChange={(e) => dispatch({ description: e.target.value })}
                 fullWidth
-                margin="normal"
+                InputProps={{
+                    sx: { borderRadius: '10px' }
+                }}
             />
-
-            {
-                (!gift.URL && !url || gift.URL === url) &&
-                    (!gift.price && !price || gift.price === price) &&
-                    (!gift.description && !description || gift.description === description)
-
-                    ? null
-                    : <LoadingButton
-                        type='submit'
-                        loading={metadata.isLoading}
-
-                    >
-                        Сохранить
-                    </LoadingButton>
-
-            }
-
-            <Button
-                variant='outlined'
-                color='error'
-                onClick={async () => {
-                    const result = await deleteGift(gift.id);
-                    navigate(`/${gift.userId}/${gift.wishlistId}`);
-                    if (metadata.isSuccess) {
-                        console.log('hete');
-                    }
-                }}
-                sx={{
-                    alignSelf: 'flex-end'
-                }}
-            >
-                Удалить
-            </Button>
-        </form>
+        </>
     )
 }
 
 
+// Editing gift image.
 
 export function EditGiftImage({ gift }: { gift: Gift }) {
     const imageRef = useRef<HTMLImageElement>(null);
-    const [imgSrc, setImgSrc] = useState(gift.imageURL ? `${IMAGE_API}/${gift.imageURL}` : '');
+    const [imgSrc, setImgSrc] = useState(gift.imageURL && gift.imageURL.includes('giftImage') ? `${IMAGE_API}/${gift.imageURL}` : gift.imageURL ?? '');
     const [file, setFile] = useState<File | null>(null);
     usePasteImage({ setFile });
 
@@ -145,6 +142,11 @@ export function EditGiftImage({ gift }: { gift: Gift }) {
         }
     }, [file]);
 
+    useEffect(() => {
+        if (imageRef.current) {
+            imageRef.current.src = gift.imageURL ?? '';
+        }
+    }, [gift.imageURL]);
 
     return (
         <div
@@ -266,8 +268,6 @@ function EditGiftImageButton(props: {
 function usePasteImage(props: {
     setFile: (a: File | null) => void
 }) {
-    const inputRef = useRef<HTMLInputElement>(null);
-
     useEffect(() => {
         const handlePaste = (e: ClipboardEvent) => {
             const items = e.clipboardData?.items;
@@ -285,4 +285,156 @@ function usePasteImage(props: {
         document.addEventListener('paste', handlePaste);
         return () => document.removeEventListener('paste', handlePaste);
     }, []);
+}
+
+
+// Gift Title.
+
+EditGift.Title = ({ gift, setTitle }: { gift: Gift, setTitle: (newTitle: string) => any }) => {
+    return (
+        <div style={{ fontSize: '32px', textAlign: 'start' }}>
+            <Link to={`/${gift.userId}/${gift.wishlistId}`}>...</Link>
+            {' / '}
+            <TextField
+                variant="standard"
+                value={gift.title}
+                onChange={e => setTitle(e.target.value)}
+                inputProps={{
+                    style: { fontSize: '32px', width: 'auto' }
+                }}
+                sx={{
+                    width: 'auto'
+                }}
+            />
+        </div>
+    )
+}
+
+// Gift URL.
+
+function GiftURL({
+    gift, setUrl, urlGift, setUrlGift, dispatch
+}: {
+    gift: Gift,
+    setUrl: (url: string) => any,
+    urlGift: Partial<Gift>,
+    setUrlGift: (gift: Partial<Gift>) => any,
+    dispatch: (params: Partial<Gift>) => any
+}) {
+
+    const [getUrlGift, metadata] = useGetUrlGift();
+
+    const URLButton = Object.keys(urlGift).length
+        ? (<Button
+            variant='contained'
+            onClick={() => setUrlGift({})}
+            sx={{
+                borderRadius: '0px 10px 10px 0px'
+            }}
+        >
+            Убрать
+        </Button>)
+        : (<LoadingButton
+            variant='contained'
+            loading={metadata.isLoading}
+            onClick={async () => {
+                try {
+                    if (gift.URL) {
+                        const url = new URL(gift.URL);
+                        console.log(url.href);
+                        const response = await getUrlGift(url.href);
+                        console.log(response);
+                        if ('data' in response) {
+                            dispatch(response.data);
+                            setUrlGift(response.data);
+                        }
+                    }
+                } catch (e) {
+
+                }
+            }}
+            sx={{
+                borderRadius: '0px 10px 10px 0px'
+            }}
+        >
+            Заполнить
+        </LoadingButton>)
+
+    return (
+        <div style={{ display: 'flex', borderRadius: '30px' }}>
+            <TextField
+                id="url"
+                name="url"
+                label="URL"
+                placeholder="Ссылка на подарок"
+                value={gift.URL}
+                onChange={e => setUrl(e.target.value)}
+                //error={!!metadata.error}
+                //helperText={metadata.error}
+                fullWidth
+
+                InputProps={{
+                    endAdornment: <IconButton></IconButton>,
+                    sx: {
+                        borderRadius: '10px 0px 0px 10px'
+                    }
+                }}
+            />
+
+            {
+                URLButton
+            }
+        </div>
+    )
+}
+
+
+// Gift Managing Buttons.
+
+function DeleteGiftButton({ gift }: { gift: Gift }) {
+    const [deleteGift, metadata] = useDeleteGift();
+    const navigate = useNavigate();
+
+    return (
+        <LoadingButton
+            variant='outlined'
+            color='error'
+            loading={metadata.isLoading}
+            onClick={async () => {
+                const result = await deleteGift(gift);
+                if ("data" in result) {
+                    navigate(`/${gift.userId}/${gift.wishlistId}`);
+                }
+            }}
+        >
+            Удалить
+        </LoadingButton>
+    )
+}
+
+function SaveChangesButton({ gift, newGiftInfo }: { gift: Gift, newGiftInfo: Gift }) {
+    const [changeGiftInfo, metadata] = useChangeGift();
+
+    const areEqual = Object.keys(giftExample).reduce((accumulator, current) => accumulator && gift[current as keyof Gift] === newGiftInfo[current as keyof Gift], true);
+
+    return (
+        <LoadingButton
+            color='primary'
+            variant="outlined"
+            disabled={areEqual}
+            loading={metadata.isLoading}
+
+            onClick={async () => {
+                if (!areEqual) {
+                    await changeGiftInfo(newGiftInfo);
+                }
+            }}
+        >
+            {
+                areEqual
+                    ? 'Сохранено'
+                    : 'Сохранить'
+            }
+        </LoadingButton>
+    )
 }
