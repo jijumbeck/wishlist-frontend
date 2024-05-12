@@ -29,3 +29,13 @@ export interface Reservation {
     userId: string;
     giftId: string;
 }
+
+export const CURRENCIES = [
+    'RUB', 'USD', 'EUR', 'BYN',
+
+    'AUD', 'AZN', 'AMD', 'BGN', 'BRL', 'HUF', 'KRW', 'VND', 'HKD', 
+    'GEL', 'DKK', 'AED', 'EGP', 'INR', 'IDR', 'KZT', 'CAD', 'QAR',
+    'KGS', 'CNY', 'MDL', 'NZD', 'TMT', 'NOK', 'PLN', 'RON', 'XDR', 
+    'RSD', 'SGD', 'TJS', 'THB', 'TRY', 'UZS', 'UAH', 'GBP', 'CZK', 
+    'SEK', 'CHF', 'ZAR', 'JPY', 
+];

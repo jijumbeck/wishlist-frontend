@@ -1,11 +1,11 @@
 import { useEffect, useId, useReducer, useRef, useState } from "react";
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, IconButton, MenuItem, Select, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { Link, useNavigate } from "react-router-dom";
 
-import { Gift, giftExample } from "../gift.dto";
+import { CURRENCIES, Gift, giftExample } from "../gift.dto";
 import { useChangeGift, useDeleteGift, useGetUrlGift, useUploadGiftImage } from "../giftAPI";
 import { IMAGE_API } from "../../../shared/api";
 import { AddGift } from "./AddGift";
@@ -85,22 +85,48 @@ export function EditGiftForm({ gift, dispatch }: { gift: Gift, dispatch: (params
 
     return (
         <>
-            <TextField
-                id='price'
-                name='price'
-                label='Цена'
-                type='number'
-                value={gift.price}
-                onChange={e => {
-                    if (handleNewPrice(e.target.value)) {
-                        dispatch({ price: Number(e.target.value) })
+            <div style={{ display: 'flex', borderRadius: '30px' }}>
+                <TextField
+                    id='price'
+                    name='price'
+                    label='Цена'
+                    type='number'
+                    value={gift.price}
+                    onChange={e => {
+                        if (handleNewPrice(e.target.value)) {
+                            dispatch({ price: Number(e.target.value) })
+                        }
+                    }}
+                    fullWidth
+                    InputProps={{
+                        sx: { borderRadius: '10px 0 0 10px' }
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                />
+                <Select
+                    variant="outlined"
+                    sx={{
+                        borderRadius: '0px 10px 10px 0'
+                    }}
+                    autoWidth
+                    MenuProps={{
+                        sx: {
+                            height: '300px',
+                            width: '200px'
+                        }
+                    }}
+
+                    value={gift.currency}
+                    onChange={(e, child) => dispatch({ currency: e.target.value as string})}
+                >
+                    {
+                        CURRENCIES.map(currency =>
+                            (<MenuItem key={currency} value={currency}>{currency}</MenuItem>)
+                        )
                     }
-                }}
-                fullWidth
-                InputProps={{
-                    sx: { borderRadius: '10px' }
-                }}
-            />
+                </Select>
+            </div>
+
 
             <TextField
                 id="description"
@@ -115,6 +141,7 @@ export function EditGiftForm({ gift, dispatch }: { gift: Gift, dispatch: (params
                 InputProps={{
                     sx: { borderRadius: '10px' }
                 }}
+                InputLabelProps={{ shrink: true }}
             />
         </>
     )
@@ -128,6 +155,8 @@ export function EditGiftImage({ gift }: { gift: Gift }) {
     const [imgSrc, setImgSrc] = useState(gift.imageURL && gift.imageURL.includes('giftImage') ? `${IMAGE_API}/${gift.imageURL}` : gift.imageURL ?? '');
     const [file, setFile] = useState<File | null>(null);
     usePasteImage({ setFile });
+
+    console.log(gift.imageURL, imgSrc);
 
     useEffect(() => {
         if (imageRef.current && file) {
@@ -143,9 +172,7 @@ export function EditGiftImage({ gift }: { gift: Gift }) {
     }, [file]);
 
     useEffect(() => {
-        if (imageRef.current) {
-            imageRef.current.src = gift.imageURL ?? '';
-        }
+        setImgSrc(gift.imageURL ?? '');
     }, [gift.imageURL]);
 
     return (
@@ -369,8 +396,6 @@ function GiftURL({
                 placeholder="Ссылка на подарок"
                 value={gift.URL}
                 onChange={e => setUrl(e.target.value)}
-                //error={!!metadata.error}
-                //helperText={metadata.error}
                 fullWidth
 
                 InputProps={{
