@@ -1,5 +1,7 @@
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import React from "react";
 
 import './Coauthoring.css';
@@ -7,7 +9,6 @@ import { useAddCoauthor, useGetCoauthors, useRemoveCoauthor } from "../coauthori
 import { Wishlist } from "../wishlist.dto";
 import { useGetFriends } from "../../friends/friendAPI";
 import { UserInfo } from "../../profile/profile.dto";
-import { ConstructionOutlined } from "@mui/icons-material";
 
 
 function useCoauthoringData(wishlist: Wishlist) {
@@ -27,12 +28,8 @@ export function CoauthoringMenu({ wishlist }: { wishlist: Wishlist }) {
         setAnchorEl(null);
     };
 
-
     const coauthours = useGetCoauthors(wishlist.id).data;
     const friends = useGetFriends(wishlist.creatorId).data;
-
-    console.log(coauthours);
-    console.log(friends);
 
 
     return (
@@ -54,12 +51,17 @@ export function CoauthoringMenu({ wishlist }: { wishlist: Wishlist }) {
                 MenuListProps={{
                     'aria-labelledby': 'basic-button',
                 }}
+                transformOrigin={{
+                    horizontal: 'center',
+                    vertical: 'top'
+                }}
             >
                 {
                     !coauthours || !friends
                         ? <p>Загрузка...</p>
                         : friends.map(friend =>
                             <CoauthoringMenuItem
+                                key={friend.id}
                                 wishlist={wishlist}
                                 friend={friend}
                                 isCoauthor={coauthours.findIndex(coauthours => coauthours.id === friend.id) >= 0}
@@ -76,22 +78,29 @@ function CoauthoringMenuItem({ friend, isCoauthor, wishlist }: { friend: UserInf
 
     return (
         <MenuItem>
-            <p>{friend.login}</p>
+            <p
+                style={{
+                    width: '150px',
+                    margin: '0',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'wrap'
+                }}
+            >{friend.login}</p>
             {
                 isCoauthor
-                    ? (<Button
+                    ? (<IconButton
                         onClick={() => removeCoauthor({ coauthorId: friend.id, wishlistId: wishlist.id })}
-                        variant="outlined"
+                        color="secondary"
                     >
-                        Убрать
-                    </Button>)
+                        <RemoveCircleOutlineIcon />
+                    </IconButton>)
 
-                    : (<Button
+                    : (<IconButton
                         onClick={() => addCoauthor({ coauthorId: friend.id, wishlistId: wishlist.id })}
-                        variant="outlined"
                     >
-                        Добавить
-                    </Button>)
+                        <AddCircleOutlineIcon />
+                    </IconButton>)
             }
         </MenuItem>
     )
