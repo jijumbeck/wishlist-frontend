@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../../shared/api';
 import { FriendshipRequest } from './friend.dto';
 import { UserInfo } from '../profile/profile.dto';
+import { notificationApi } from '../notifications/notificationAPI';
 
 
 export const friendApi = createApi({
@@ -41,7 +42,11 @@ export const friendApi = createApi({
                 url: 'friendship/addFriend',
                 body: { requestRecieverId: userId }
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Friend', id }]
+            invalidatesTags: (result, error, id) => [{ type: 'Friend', id }],
+            onQueryStarted: async (arg, api) => {
+                await api.queryFulfilled;
+                api.dispatch(notificationApi.util.invalidateTags(['Notifications']));
+            }
         }),
 
         deleteFriend: builder.mutation<string, string>({
@@ -50,7 +55,11 @@ export const friendApi = createApi({
                 url: 'friendship/deleteFriend',
                 body: { friendToDeleteId: userId }
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Friend', id }]
+            invalidatesTags: (result, error, id) => [{ type: 'Friend', id }],
+            onQueryStarted: async (arg, api) => {
+                await api.queryFulfilled;
+                api.dispatch(notificationApi.util.invalidateTags(['Notifications']));
+            }
         })
     })
 });

@@ -19,10 +19,12 @@ export interface Notification {
 export const notificationApi = createApi({
     reducerPath: 'notificationAPI',
     baseQuery: baseQueryWithReauth,
+    tagTypes: ['Notifications'],
     endpoints: (builder) => ({
 
         getNotifications: builder.query <Notification[], unknown>({
-            query: () => 'notification'
+            query: () => 'notification',
+            providesTags: ['Notifications']
         })
 
     })

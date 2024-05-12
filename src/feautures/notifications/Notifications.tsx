@@ -1,9 +1,14 @@
 import { Badge, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
 import React from "react";
 import { Notification, NotificationType, useGetNotifications } from "./notificationAPI";
 import { useGetUserInfo } from "../profile/profileAPI";
-import { useAddCoauthor } from "../wishlists/coauthoringAPI";
+import { useAddCoauthor, useRemoveCoauthor } from "../wishlists/coauthoringAPI";
+import './Notification.css';
+import { Link } from "react-router-dom";
+import { useAddFriend, useDeleteFriend } from "../friends/friendAPI";
 
 
 export function Notifications() {
@@ -48,7 +53,7 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
             >
                 {
                     notifications && notifications.length > 0
-                        ? notifications.map(notification => <NotificationMenuItem notification={notification} />)
+                        ? notifications.map(notification => <NotificationMenuItem key={`${notification.type} ${notification.requestSenderId}`} notification={notification} />)
                         : <p>Нет уведомлений.</p>
                 }
             </Menu>
@@ -66,51 +71,62 @@ function NotificationMenuItem({ notification }: { notification: Notification }) 
 
 function FriendNotification({ userId }: { userId: string }) {
     const user = useGetUserInfo(userId).data;
+    const [addFriend] = useAddFriend();
+    const [deleteFriend] = useDeleteFriend();
 
     if (!user) {
         return <p>Загрузка...</p>
     }
 
     return (
-        <MenuItem>
-            <p>
-                Запрос на дружбу: {user.login}
+        <MenuItem
+            className="menu__item"
+        >
+            <p className="menu__item__text">
+                Запрос на дружбу: {' '}
+                <Link style={{ display: 'inline' }} to={`/${userId}`}>{user.login}</Link>
             </p>
             <div>
-                <Button
-                    variant="outlined"
+                <IconButton
+                    onClick={() => addFriend(userId)}
+                    color="primary"
                 >
-                    Принять
-                </Button>
-                <Button
-                    variant="outlined"
+                    <CheckCircleOutlineIcon />
+                </IconButton>
+                <IconButton
+                    onClick={() => deleteFriend(userId)}
                     color="error"
                 >
-                    Отклонить
-                </Button>
+                    <CancelIcon />
+                </IconButton>
             </div>
         </MenuItem>
     )
 }
 
 function CoauthorNotification({ notification }: { notification: Notification }) {
-    const [addCoauthor, metadata] = useAddCoauthor();
+    const [addCoauthor] = useAddCoauthor();
+    const [removeCoauthor] = useRemoveCoauthor();
 
     return (
-        <MenuItem>
-            Запрос на соавторство
-            <Button
-                variant="outlined"
+        <MenuItem
+            className="menu__item"
+        >
+            <p className="menu__item__text">
+                Запрос на соавторство
+            </p>
+            <IconButton
                 onClick={() => addCoauthor({ coauthorId: notification.requestReceiverId, wishlistId: notification.data?.wishlistId })}
+                color="primary"
             >
-                Принять
-            </Button>
-            <Button
-                variant="outlined"
+                <CheckCircleOutlineIcon />
+            </IconButton>
+            <IconButton
+                onClick={() => removeCoauthor({ coauthorId: notification.requestReceiverId, wishlistId: notification.data?.wishlistId })}
                 color="error"
             >
-                Отклонить
-            </Button>
+                <CancelIcon />
+            </IconButton>
         </MenuItem>
     )
 }

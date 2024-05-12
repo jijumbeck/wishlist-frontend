@@ -1,0 +1,14 @@
+
+.menu__item {
+    width: 350px;
+}
+
+.menu__item__text {
+    margin: 0;
+
+    display: inline;
+    width: 250px;
+
+    text-align: start;
+    text-wrap: balance;
+}

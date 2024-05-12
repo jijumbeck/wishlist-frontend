@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../../shared/api";
 import { UserInfo } from "../profile/profile.dto";
+import { notificationApi } from "../notifications/notificationAPI";
 
 export const coauthoringApi = createApi({
     reducerPath: 'coauthoringApi',
@@ -21,7 +22,11 @@ export const coauthoringApi = createApi({
                 method: 'POST',
                 body: param
             }),
-            invalidatesTags: (result, error, param) => ['Coauthoring', { type: 'WishlistForUser', id: param.coauthorId }]
+            invalidatesTags: (result, error, param) => ['Coauthoring', { type: 'WishlistForUser', id: param.coauthorId }],
+            onQueryStarted: async (arg, api) => {
+                await api.queryFulfilled;
+                api.dispatch(notificationApi.util.invalidateTags(['Notifications']));
+            }
         }),
 
         removeCoauthor: builder.mutation<void, { coauthorId: string, wishlistId: string }>({
@@ -30,7 +35,11 @@ export const coauthoringApi = createApi({
                 method: 'POST',
                 body: param
             }),
-            invalidatesTags: () => ['Coauthoring']
+            invalidatesTags: () => ['Coauthoring'],
+            onQueryStarted: async (arg, api) => {
+                await api.queryFulfilled;
+                api.dispatch(notificationApi.util.invalidateTags(['Notifications']));
+            }
         }),
 
     })
