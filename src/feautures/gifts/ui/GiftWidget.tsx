@@ -12,29 +12,37 @@ import { ReservationCardComponent } from "./GiftPreview";
 import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
 import { WishlistContext } from "../../wishlists/ui/WishlistWidget";
 import { WishlistAccessType } from "../../wishlists/wishlist.dto";
+import { useGetWishlistInfo } from "../../wishlists/wishlistAPI";
 
 
 export function giftIdLoader({ params }: { params: any }) {
     const giftId = params.giftId;
-    return giftId;
+    const wishlistId = params.wishlistId;
+    return { giftId, wishlistId };
 }
 
 export function GiftWidget() {
-    const giftId = useLoaderData() as string;
+    const { giftId, wishlistId } = useLoaderData() as { giftId: string, wishlistId: string };
     const gift = useGetGift(giftId).data;
+    const wishlist = useGetWishlistInfo(wishlistId).data;
 
     if (!gift) {
         return (<p>Загрузка...</p>)
     }
 
+    if (!wishlist) {
+        return (<p>Загрузка...</p>)
+    }
+
     return (
         <div className="gift-page">
-
-            <WithUserRelation
-                renderMe={() => <EditGift gift={gift} />}
-                renderFriend={() => <GiftCardPage gift={gift} />}
-                renderNone={() => <GiftCardPage gift={gift} />}
-            />
+            <WishlistContext.Provider value={wishlist}>
+                <WithUserRelation
+                    renderMe={() => <EditGift gift={gift} />}
+                    renderFriend={() => <GiftCardPage gift={gift} />}
+                    renderNone={() => <GiftCardPage gift={gift} />}
+                />
+            </WishlistContext.Provider>
         </div>
     )
 }
@@ -76,39 +84,33 @@ export function GiftTitle({ gift }: { gift: Gift }) {
 }
 
 
-function EditGiftWidget({ gift }: { gift: Gift }) {
-    return (
-        <>
-            <div
-                style={{
-                    display: 'flex'
-                }}
-            >
-                <GiftTitle gift={gift} />
-            </div>
-
-            <div style={{ display: 'flex', gap: '20px', margin: '40px' }}>
-                <EditGiftImage gift={gift} />
-                {/* <EditGiftForm gift={gift} /> */}
-            </div>
-        </>
-    )
-}
-
-
 export function GiftCardPage({ gift }: { gift: Gift }) {
     const wishlist = useContext(WishlistContext);
+
+    console.log(wishlist);
 
     return (
         <>
             <div style={{ fontSize: '32px', textAlign: 'start' }}>
-                <Link to={`/${gift.userId}/${gift.wishlistId}`}>...</Link>
+                <Link to={`/${wishlist?.creatorId}/${gift.wishlistId}`}>...</Link>
                 {' / '}
                 {gift.title}
             </div>
 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', margin: '40px' }}>
-                <div className="gift-image"></div>
+                <div
+                    className="gift-page__image gift-card__image_default"    
+                >
+                    <img
+                        src={gift.imageURL ?? ''}
+                        alt="Изображение подарка"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }}
+                    />
+                </div>
                 <div style={{ width: '50%', display: "flex", flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                     <p>Описание: {gift.description}</p>
                     {gift.URL ? <a href={gift.URL}>Ссылка на подарок</a> : null}
