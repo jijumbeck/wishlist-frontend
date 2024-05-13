@@ -1,5 +1,5 @@
 import { LoadingButton } from "@mui/lab";
-import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Wishlist, WishlistAccessType } from "../wishlist.dto";
 import { useUpdateWishlist } from "../wishlistAPI";
@@ -45,21 +45,30 @@ export function ChangeWishlistAccess({ wishlist }: { wishlist: Wishlist }) {
                 setAccess(newValue)
             }}
         >
-            <ToggleButton value={WishlistAccessType.Public}>
-                <PublicIcon />
-            </ToggleButton>
+            <Tooltip title="Вишлист будет доступен всем пользователям." placement="top" arrow>
+                <ToggleButton value={WishlistAccessType.Public}>
+                    <PublicIcon />
+                </ToggleButton>
+            </Tooltip>
 
-            <ToggleButton value={WishlistAccessType.ForFriends}>
-                <PeopleAltIcon />
-            </ToggleButton>
+            <Tooltip title="Вишлист будет доступен всем друзьям." placement="top" arrow>
+                <ToggleButton value={WishlistAccessType.ForFriends}>
+                    <PeopleAltIcon />
+                </ToggleButton>
+            </Tooltip>
 
-            <ToggleButton value={WishlistAccessType.Private}>
-                <VisibilityOffIcon />
-            </ToggleButton>
+            <Tooltip title="Вишлист будет доступен только Вам." placement="top" arrow>
+                <ToggleButton value={WishlistAccessType.Private}>
+                    <VisibilityOffIcon />
+                </ToggleButton>
+            </Tooltip>
 
-            <ToggleButton value={WishlistAccessType.Custom}>
-                <SettingsSuggestIcon />
-            </ToggleButton>
+            <Tooltip title="Вишлист будет доступен друзьям, которых вы выбрали." placement="top" arrow>
+                <ToggleButton value={WishlistAccessType.Custom}>
+                    <SettingsSuggestIcon />
+                </ToggleButton>
+            </Tooltip>
+
         </ToggleButtonGroup>
     )
 }
