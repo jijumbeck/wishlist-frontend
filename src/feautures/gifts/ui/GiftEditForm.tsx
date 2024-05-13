@@ -117,7 +117,7 @@ export function EditGiftForm({ gift, dispatch }: { gift: Gift, dispatch: (params
                     }}
 
                     value={gift.currency}
-                    onChange={(e, child) => dispatch({ currency: e.target.value as string})}
+                    onChange={(e, child) => dispatch({ currency: e.target.value as string })}
                 >
                     {
                         CURRENCIES.map(currency =>
@@ -150,13 +150,16 @@ export function EditGiftForm({ gift, dispatch }: { gift: Gift, dispatch: (params
 
 // Editing gift image.
 
+function getGiftImageURL(url: string) {
+    return url && url.includes('giftImage') ? `${IMAGE_API}/${url}` : url;
+}
+
 export function EditGiftImage({ gift }: { gift: Gift }) {
     const imageRef = useRef<HTMLImageElement>(null);
-    const [imgSrc, setImgSrc] = useState(gift.imageURL && gift.imageURL.includes('giftImage') ? `${IMAGE_API}/${gift.imageURL}` : gift.imageURL ?? '');
+    const [imgSrc, setImgSrc] = useState(getGiftImageURL(gift.imageURL ?? ''));
     const [file, setFile] = useState<File | null>(null);
     usePasteImage({ setFile });
 
-    console.log(gift.imageURL, imgSrc);
 
     useEffect(() => {
         if (imageRef.current && file) {
@@ -172,7 +175,7 @@ export function EditGiftImage({ gift }: { gift: Gift }) {
     }, [file]);
 
     useEffect(() => {
-        setImgSrc(gift.imageURL ?? '');
+        setImgSrc(getGiftImageURL(gift.imageURL ?? ''));
     }, [gift.imageURL]);
 
     return (
