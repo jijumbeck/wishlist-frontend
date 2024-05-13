@@ -1,6 +1,6 @@
 import { LoadingButton } from "@mui/lab";
-import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Checkbox, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Wishlist, WishlistAccessType } from "../wishlist.dto";
 import { useUpdateWishlist } from "../wishlistAPI";
 
@@ -10,6 +10,8 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import { useGetFriends } from "../../friends/friendAPI";
+import { UserInfo } from "../../profile/profile.dto";
+import { useForbidAccess, useGetUsersWithAccess, useGiveAccess } from "../accessAPI";
 
 
 export function ChangeWishlistTitle({ wishlist, newTitle }: { wishlist: Wishlist, newTitle: string }) {
@@ -42,7 +44,9 @@ export function ChangeWishlistAccess({ wishlist }: { wishlist: Wishlist }) {
             value={access}
             exclusive
             onChange={(e, newValue) => {
-                setAccess(newValue)
+                if (newValue) {
+                    setAccess(newValue)
+                }
             }}
         >
             <Tooltip title="Вишлист будет доступен всем пользователям." placement="top" arrow>
@@ -64,8 +68,12 @@ export function ChangeWishlistAccess({ wishlist }: { wishlist: Wishlist }) {
             </Tooltip>
 
             <Tooltip title="Вишлист будет доступен друзьям, которых вы выбрали." placement="top" arrow>
-                <ToggleButton value={WishlistAccessType.Custom}>
-                    <SettingsSuggestIcon />
+                <ToggleButton
+                    value={WishlistAccessType.Custom}
+
+                >
+                    <ChooseCustomAccess userId={wishlist.creatorId} wishlistId={wishlist.id} />
+                    {/* <SettingsSuggestIcon /> */}
                 </ToggleButton>
             </Tooltip>
 
@@ -73,45 +81,65 @@ export function ChangeWishlistAccess({ wishlist }: { wishlist: Wishlist }) {
     )
 }
 
-export function CustomFriendAccess({ userId }: { userId: string }) {
-    const friends = useGetFriends(userId).data;
-
-
-    const [userIds, setUserIds] = useState<string[]>([]);
-    const handleChange = (event: SelectChangeEvent<typeof userIds>) => {
-        const {
-            target: { value },
-        } = event;
-        console.log(value);
-        setUserIds(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
+function ChooseCustomAccess({ userId, wishlistId }: { userId: string, wishlistId: string }) {
+    const friends: UserInfo[] | undefined = useGetFriends(userId).data;
+    const usersWithAccess = useGetUsersWithAccess(wishlistId).data;
+    const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
 
     return (
-        <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Age</InputLabel>
-            <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                multiple
-                value={userIds}
-                renderValue={(selected) => selected.join(', ')}
-                label="Друзья"
-                onChange={handleChange}
+        <div>
+            <div
+                id="custom-access-button"
+                onClick={e => setMenuAnchor(e.currentTarget)}
+            >
+                <SettingsSuggestIcon />
+            </div>
+            <Menu
+                id="custom-access-menu"
+                anchorEl={menuAnchor}
+                open={Boolean(menuAnchor)}
+                onClose={() => setMenuAnchor(null)}
             >
                 {
-                    friends
-                        ? friends.map((friend) => (
-                            <MenuItem key={friend.id} value={friend.login}>
-                                <Checkbox checked={userIds.indexOf(friend.id) > -1} />
-                                <ListItemText primary={friend.login} />
-                            </MenuItem>))
-                        : <p>Загрузка...</p>
+                    !friends || !usersWithAccess
+                        ? <p>Загрузка...</p>
+                        : friends.map(friend =>
+                            <CustomAccessMenuItem
+                                key={friend.id}
+                                user={friend}
+                                wishlistId={wishlistId}
+                                hasAccess={usersWithAccess.findIndex(id => id === friend.id) >= 0}
+                            />)
                 }
-            </Select>
-        </FormControl>
+            </Menu>
+        </div>
     )
+}
+
+function CustomAccessMenuItem({ user, hasAccess, wishlistId }: { user: UserInfo, hasAccess: boolean, wishlistId: string }) {
+    const [checked, setChecked] = useState(hasAccess);
+    const [giveAccess] = useGiveAccess();
+    const [forbidAccess] = useForbidAccess();
+
+    useEffect(() => {
+        if (checked) {
+            giveAccess({ userId: user.id, wishlistId });
+        } else {
+            forbidAccess({ userId: user.id, wishlistId });
+        }
+    }, [checked])
+
+    return (
+        <MenuItem>
+            <Checkbox
+                checked={checked}
+                onChange={e => setChecked(e.target.checked)}
+            />
+            {user.login}
+        </MenuItem>
+    )
+}
+
+export function CustomFriendAccess({ userId }: { userId: string }) {
+
 }
