@@ -1,4 +1,5 @@
 import {
+    Outlet,
     createBrowserRouter,
 } from "react-router-dom";
 import { Layout } from "../feautures/layout/Layout";
@@ -13,6 +14,7 @@ import { SearchWidget } from "../feautures/search/SearchWidget";
 import { SettingsWidget } from "../feautures/profile/ui/SettingsWidget";
 import { ReservationWidget } from "../feautures/gifts/ui/Reservation";
 import { UsersWidget } from "../feautures/friends/ui/UsersWidget";
+import { MainWrapper, WishlistByLink } from "../feautures/wishlists/ui/WishlistByLink";
 
 export const router = createBrowserRouter([
     {
@@ -50,6 +52,22 @@ export const router = createBrowserRouter([
             {
                 path: '/users',
                 element: <UsersWidget />
+            },
+            {
+                path: 'wishlist-by-link/:wishlistId',
+                element: <MainWrapper><Outlet /></MainWrapper>,
+                children: [
+                    {
+                        index: true,
+                        element: <WishlistByLink />,
+                        loader: wishlstIdLoader,
+                    },
+                    {
+                        path: ':giftId',
+                        element: <GiftWidget />,
+                        loader: giftIdLoader
+                    }
+                ]
             },
             {
                 path: '/:userId',

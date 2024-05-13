@@ -92,7 +92,7 @@ export function GiftCardPage({ gift }: { gift: Gift }) {
     return (
         <>
             <div style={{ fontSize: '32px', textAlign: 'start' }}>
-                <Link to={`/${wishlist?.creatorId}/${gift.wishlistId}`}>...</Link>
+                <Link to=".." relative="path">...</Link>
                 {' / '}
                 {gift.title}
             </div>

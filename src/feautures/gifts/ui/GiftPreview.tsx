@@ -18,7 +18,7 @@ export function GiftPreview({ gift }: { gift: Gift }) {
         <div
             className="gift-card"
             onClick={() => {
-                navigate(`/${gift.userId}/${gift.wishlistId}/${gift.id}`)
+                navigate(`${gift.id}`)
             }}
         >
             <div className="gift-image shadow">

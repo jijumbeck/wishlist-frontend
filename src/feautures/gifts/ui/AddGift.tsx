@@ -20,6 +20,10 @@ export function AddGift({ gift }: { gift: Gift }) {
         setAnchorEl(null);
     };
 
+    if (!user) {
+        return null;
+    }
+
     return (
         <div
             style={{

@@ -47,13 +47,3 @@ export function GiftList({ wishlist }: { wishlist: Wishlist }) {
         </>
     )
 }
-
-export function GiftListForFriends({ gifts }: { gifts: Gift[] }) {
-    return (
-        <>
-            {
-
-            }
-        </>
-    )
-}
