@@ -30,6 +30,12 @@ export interface Reservation {
     giftId: string;
 }
 
+export interface GuestReservation {
+    giftId: string,
+    guestId: string,
+    guestName: string
+}
+
 export const CURRENCIES = [
     'RUB', 'USD', 'EUR', 'BYN',
 

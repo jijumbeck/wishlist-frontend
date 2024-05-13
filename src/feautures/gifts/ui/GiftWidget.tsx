@@ -13,6 +13,7 @@ import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
 import { WishlistContext } from "../../wishlists/ui/WishlistWidget";
 import { WishlistAccessType } from "../../wishlists/wishlist.dto";
 import { useGetWishlistInfo } from "../../wishlists/wishlistAPI";
+import { ReservationGiftWidget } from "./ReservationControl";
 
 
 export function giftIdLoader({ params }: { params: any }) {
@@ -99,7 +100,7 @@ export function GiftCardPage({ gift }: { gift: Gift }) {
 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', margin: '40px' }}>
                 <div
-                    className="gift-page__image gift-card__image_default"    
+                    className="gift-page__image gift-card__image_default"
                 >
                     <img
                         src={gift.imageURL ?? ''}
@@ -119,8 +120,8 @@ export function GiftCardPage({ gift }: { gift: Gift }) {
                     {
                         wishlist?.wishlistAccess === WishlistAccessType.ForFriends || wishlist?.wishlistAccess === WishlistAccessType.Custom
                             ? (<>
-                                <ReservationCardComponent gift={gift} />
                                 <Propmts />
+                                <ReservationGiftWidget gift={gift} />
                             </>)
                             : null
                     }

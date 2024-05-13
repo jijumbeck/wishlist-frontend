@@ -94,7 +94,7 @@ export function AddReservationButton({ gift }: { gift: Gift }) {
 
     return (
         <IconButton
-            onClick={() => reserveGift(gift.id)}
+            onClick={() => reserveGift({ giftId: gift.id })}
         >
             <AddCircleOutlineIcon />
         </IconButton>
@@ -106,7 +106,7 @@ export function RemoveReservationButton({ gift }: { gift: Gift }) {
 
     return (
         <IconButton
-            onClick={() => removeReservation(gift.id)}
+            onClick={() => removeReservation({ giftId: gift.id })}
         >
             <RemoveCircleOutlineIcon />
         </IconButton>

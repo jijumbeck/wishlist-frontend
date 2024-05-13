@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../../shared/api";
-import { Reservation } from "./gift.dto";
+import { GuestReservation, Reservation } from "./gift.dto";
+
 
 
 export const reservationApi = createApi({
@@ -9,30 +10,30 @@ export const reservationApi = createApi({
     tagTypes: ['Reservation'],
     endpoints: (builder) => ({
 
-        reserveGift: builder.mutation<string, string>({
-            query: (giftId: string) => ({
+        reserveGift: builder.mutation<{ guestId: string }, { giftId: string, guest?: { guestId?: string, guestName: string } }>({
+            query: (param) => ({
                 url: 'reservation',
                 method: 'POST',
-                body: { giftId }
+                body: param
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Reservation', id }]
+            invalidatesTags: (result, error, param) => [{ type: 'Reservation', id: param.giftId }]
         }),
 
-        getReservations: builder.query<Reservation[], unknown>({
+        getReservations: builder.query<Array<Reservation>, unknown>({
             query: () => 'reservation/reservations',
             providesTags: () => ['Reservation']
         }),
 
-        removeReservation: builder.mutation<void, string>({
-            query: (giftId: string) => ({
+        removeReservation: builder.mutation<void, { giftId: string, guestId?: string }>({
+            query: (param) => ({
                 url: `reservation`,
                 method: 'DELETE',
-                body: { giftId }
+                body: param
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Reservation', id }]
+            invalidatesTags: (result, error, param) => [{ type: 'Reservation', id: param.giftId }]
         }),
 
-        getGiftReservations: builder.query<Reservation[], string>({
+        getGiftReservations: builder.query<Array<Reservation | GuestReservation>, string>({
             query: (giftId: string) => `reservation/${giftId}`,
             providesTags: (result, error, id) => [{ type: 'Reservation', id }]
         })
