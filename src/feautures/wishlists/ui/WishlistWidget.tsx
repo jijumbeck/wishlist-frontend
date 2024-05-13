@@ -9,6 +9,7 @@ import { GiftList } from "../../gifts/ui/GiftList";
 import { ChangeWishlistAccess, ChangeWishlistTitle } from "./WishlistUpdateInfoElements";
 import { CoauthoringMenu } from "./Coauthoring";
 import { WithUserRelation } from "../../profile/helpers/WithUserRelation";
+import { ShareByLink } from "./ShareByLink";
 
 
 export async function wishlstIdLoader({ params }: { params: any }) {
@@ -33,6 +34,7 @@ export function WishlistWidget() {
                     renderMe={() => (
                         <>
                             <WishlistTitleInput wishlist={wishlist} />
+                            <ShareByLink wishlist={wishlist} />
                             <CoauthoringMenu wishlist={wishlist} />
                         </>
                     )}

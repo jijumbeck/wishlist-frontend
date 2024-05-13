@@ -37,8 +37,8 @@ export const wishlistAPI = createApi({
 
         getWishlistInfo: builder.query<Wishlist, string>({
             query: (wishlistId: string) => `wishlist/${wishlistId}`,
-            providesTags: (result) => {
-                return [{ type: 'Wishlist', id: result?.id }]
+            providesTags: (result, error, wishlistId) => {
+                return [{ type: 'Wishlist', id: wishlistId }]
             }
         }),
 
@@ -48,7 +48,7 @@ export const wishlistAPI = createApi({
                 method: 'PATCH',
                 body: wishlist
             }),
-            invalidatesTags: () => ['Wishlist', 'WishlistForUser']
+            invalidatesTags: (result, error, wishlist) => [{ type: 'Wishlist', id: wishlist.id }]
         }),
 
         deleteWishlist: builder.mutation<void, string>({
@@ -56,7 +56,7 @@ export const wishlistAPI = createApi({
                 url: `wishlist/${wishlistId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: () => ['Wishlist']
+            invalidatesTags: (result, error, id) => [{ type: 'Wishlist', id: id }]
         }),
 
         getWishlistGifts: builder.query<Gift[], string>({

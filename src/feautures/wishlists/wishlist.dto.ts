@@ -18,4 +18,5 @@ export interface Wishlist {
     title: string;
     wishlistType: WishlistType;
     wishlistAccess: WishlistAccessType;
+    hasAccessByLink: boolean;
 }
