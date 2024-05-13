@@ -41,7 +41,15 @@ export const profileAPI = createApi({
                 method: 'POST',
                 body: { newPassword }
             })
-        })
+        }),
+
+        uploadUserImage: builder.mutation<void, FormData>({
+            query: (formData) => ({
+                url: 'user/uploadImage',
+                method: 'POST',
+                body: formData
+            }),
+        }),
     })
 });
 
@@ -51,3 +59,4 @@ export const useGetUsersBySearch = profileAPI.endpoints.getUsersBySearch.useQuer
 
 export const useChangeUserInfo = profileAPI.endpoints.changeUserInfo.useMutation;
 export const useChangePassword = profileAPI.endpoints.changePassword.useMutation;
+export const useUploadUserImage = profileAPI.endpoints.uploadUserImage.useMutation;

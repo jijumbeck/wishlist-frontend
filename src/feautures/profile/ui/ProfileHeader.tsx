@@ -1,3 +1,4 @@
+import { IMAGE_API } from "../../../shared/api";
 import { FriendProfileComponent } from "../../friends/ui/FriendProfileComponent";
 import { UserInfo } from "../profile.dto";
 import { ProfileHeaderButton } from "./ProfileHeaderButton";
@@ -27,10 +28,10 @@ export function ProfileHeader({ user }: { user: UserInfo }) {
 function UserImage({ user }: { user: UserInfo }) {
     const isImageExists = false;
 
-    if (isImageExists) {
+    if (user.imageURL) {
         return (
             <img
-                src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                src={`${IMAGE_API}/${user.imageURL}`}
                 alt="Аватарка профиля пользователя"
                 style={{
                     width: '100px',

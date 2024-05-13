@@ -4,6 +4,9 @@ import { ChangeUserInfoDTO, UserInfo } from "../profile.dto";
 import { useChangeUserInfo } from "../profileAPI";
 import * as Yup from 'yup';
 import { useFormik } from "formik";
+import { ImageUpload } from "./ImageUpload";
+
+
 
 
 const initialValues = (user: UserInfo) => {
