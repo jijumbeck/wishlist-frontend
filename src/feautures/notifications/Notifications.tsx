@@ -9,6 +9,7 @@ import { useAddCoauthor, useRemoveCoauthor } from "../wishlists/coauthoringAPI";
 import './Notification.css';
 import { Link } from "react-router-dom";
 import { useAddFriend, useDeleteFriend } from "../friends/friendAPI";
+import { useGetWishlistInfo } from "../wishlists/wishlistAPI";
 
 
 export function Notifications() {
@@ -107,13 +108,15 @@ function FriendNotification({ userId }: { userId: string }) {
 function CoauthorNotification({ notification }: { notification: Notification }) {
     const [addCoauthor] = useAddCoauthor();
     const [removeCoauthor] = useRemoveCoauthor();
+    const wishlist = useGetWishlistInfo(notification.data.wishlistId).data;
+    const user = useGetUserInfo(wishlist?.creatorId ?? '').data;
 
     return (
         <MenuItem
             className="menu__item"
         >
             <p className="menu__item__text">
-                Запрос на соавторство
+                Запрос на соавторство {wishlist?.title} от {user?.login}
             </p>
             <IconButton
                 onClick={() => addCoauthor({ coauthorId: notification.requestReceiverId, wishlistId: notification.data?.wishlistId })}
