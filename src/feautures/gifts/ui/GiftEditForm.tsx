@@ -354,6 +354,7 @@ function GiftURL({
 
     const [getUrlGift, metadata] = useGetUrlGift();
 
+
     const URLButton = Object.keys(urlGift).length
         ? (<Button
             variant='contained'
@@ -371,9 +372,7 @@ function GiftURL({
                 try {
                     if (gift.URL) {
                         const url = new URL(gift.URL);
-                        console.log(url.href);
                         const response = await getUrlGift(url.href);
-                        console.log(response);
                         if ('data' in response) {
                             dispatch(response.data);
                             setUrlGift(response.data);
@@ -391,28 +390,34 @@ function GiftURL({
         </LoadingButton>)
 
     return (
-        <div style={{ display: 'flex', borderRadius: '30px' }}>
-            <TextField
-                id="url"
-                name="url"
-                label="URL"
-                placeholder="Ссылка на подарок"
-                value={gift.URL}
-                onChange={e => setUrl(e.target.value)}
-                fullWidth
+        <div>
+            <div style={{ display: 'flex', borderRadius: '30px' }}>
+                <TextField
+                    id="url"
+                    name="url"
+                    label="URL"
+                    placeholder="Ссылка на подарок"
+                    value={gift.URL}
+                    onChange={e => setUrl(e.target.value)}
+                    fullWidth
 
-                InputProps={{
-                    endAdornment: <IconButton></IconButton>,
-                    sx: {
-                        borderRadius: '10px 0px 0px 10px'
-                    }
-                }}
-            />
+                    InputProps={{
+                        endAdornment: <IconButton></IconButton>,
+                        sx: {
+                            borderRadius: '10px 0px 0px 10px'
+                        }
+                    }}
+                />
 
-            {
-                URLButton
-            }
+                {
+                    URLButton
+                }
+            </div>
+            <p style={{ margin: '0' }}>
+                {typeof metadata.error as unknown === 'string' ? metadata.error as unknown as string : ''}
+            </p>
         </div>
+
     )
 }
 

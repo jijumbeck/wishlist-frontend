@@ -58,6 +58,10 @@ export const giftApi = createApi({
             query: (url) => ({
                 url: `product?url=${encodeURIComponent(url)}`
             }),
+            transformErrorResponse: (error, meta, arg) => {
+                const data = error.data as { message: string };
+                return data.message;
+            }
         })
     })
 })
