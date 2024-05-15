@@ -62,6 +62,11 @@ export function GiftPreviewForFriend({ gift }: { gift: Gift }) {
                 }}
             >
                 <div className="gift-image shadow">
+                    {
+                        gift.imageURL
+                            ? <img src={gift.imageURL && gift.imageURL.includes('giftImage') ? `${IMAGE_API}/${gift.imageURL}` : gift.imageURL ?? ''} />
+                            : null
+                    }
                 </div>
                 {gift.title}
             </div>

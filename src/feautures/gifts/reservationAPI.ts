@@ -10,6 +10,15 @@ export const reservationApi = createApi({
     tagTypes: ['Reservation'],
     endpoints: (builder) => ({
 
+        updateReservations: builder.mutation<unknown, string>({
+            query: (guestId: string) => ({
+                url: 'reservation/update',
+                method: 'POST',
+                body: { guestId }
+            }),
+            invalidatesTags: ['Reservation']
+        }),
+
         reserveGift: builder.mutation<{ guestId: string }, { giftId: string, guest?: { guestId?: string, guestName: string } }>({
             query: (param) => ({
                 url: 'reservation',
@@ -46,3 +55,4 @@ export const useGetGiftReservations = reservationApi.endpoints.getGiftReservatio
 
 export const useReserveGift = reservationApi.endpoints.reserveGift.useMutation;
 export const useRemoveReservation = reservationApi.endpoints.removeReservation.useMutation;
+export const useUpdateReservations = reservationApi.endpoints.updateReservations.useMutation;

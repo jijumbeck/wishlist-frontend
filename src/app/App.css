@@ -5,7 +5,7 @@ body {
   --xl: 1280px;
   --double-xl: 1536px;
 
-  background: linear-gradient(white, transparent),
+  background: linear-gradient(#f5f6ff, 90%, transparent),
     linear-gradient(45deg, #ff7171, 40%, #505fff);
   background-attachment: fixed;
 
