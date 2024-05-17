@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../../shared/api';
 import { ChangeUserInfoDTO, UserInfo } from './profile.dto';
+import { logout } from '../auth/auth.slice';
 
 
 export const profileAPI = createApi({
@@ -40,7 +41,11 @@ export const profileAPI = createApi({
                 url: 'auth/change-password',
                 method: 'POST',
                 body: { newPassword }
-            })
+            }),
+            onQueryStarted: async (arg, api) => {
+                await api.queryFulfilled;
+                api.dispatch(logout());
+            }
         }),
 
         uploadUserImage: builder.mutation<void, FormData>({

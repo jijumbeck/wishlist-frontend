@@ -4,9 +4,6 @@ import { ChangeUserInfoDTO, UserInfo } from "../profile.dto";
 import { useChangeUserInfo } from "../profileAPI";
 import * as Yup from 'yup';
 import { useFormik } from "formik";
-import { ImageUpload } from "./ImageUpload";
-
-
 
 
 const initialValues = (user: UserInfo) => {
@@ -15,7 +12,8 @@ const initialValues = (user: UserInfo) => {
         name: user.name ? user.name : '',
         lastName: user.lastName ? user.lastName : '',
         login: user.login,
-        email: user.email
+        email: user.email,
+        birthdate: user.birthdate?.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? ''
     } as ChangeUserInfoDTO;
 }
 
@@ -36,6 +34,7 @@ export function ChangeProfileForm({ user }: { user: UserInfo }) {
             changeUserInfo(values);
         }
     });
+
 
     return (
         <>
@@ -100,6 +99,21 @@ export function ChangeProfileForm({ user }: { user: UserInfo }) {
                     helperText={formik.touched.lastName ? formik.errors.lastName : null}
                 />
 
+                <TextField
+                    id="birthdate"
+                    name="birthdate"
+                    label="Дата рождения"
+                    placeholder="Дата рождения"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+
+                    value={formik.values.birthdate}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.birthdate && !!formik.errors.birthdate}
+                    helperText={formik.touched.birthdate ? formik.errors.birthdate : null}
+                />
+
                 <LoadingButton
                     type='submit'
                     loading={metadata.isLoading}
@@ -109,7 +123,7 @@ export function ChangeProfileForm({ user }: { user: UserInfo }) {
                     Поменять
                 </LoadingButton>
 
-                {metadata.error ? <p>{metadata.error.toString()}</p> : null}
+                {metadata.error && 'message' in metadata.error ? <p>{metadata.error.message}</p> : null}
             </form>
         </>
     )

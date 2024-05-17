@@ -12,7 +12,7 @@ export async function userIdLoader({ params }: { params: any }) {
 
 export function ProfileWidget() {
     const userId = useLoaderData() as string;
-    
+
     const user = useGetUserInfo(userId).data;
     const userRelation = useUserRelation(userId);
 

@@ -6,7 +6,7 @@ export interface UserInfo {
 
     name?: string,
     lastName?: string,
-    birthdate?: Date,
+    birthdate?: string,
     imageURL?: string
 }
 
@@ -21,5 +21,5 @@ export interface ChangeUserInfoDTO {
 
     lastName?: string;
 
-    birthdate?: Date;
+    birthdate?: string;
 }

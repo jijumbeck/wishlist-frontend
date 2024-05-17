@@ -3,10 +3,18 @@ import { useGetProfileInfo } from "../profileAPI"
 import { ChangePassword } from "./ChangePasswordForm";
 import { ChangeProfileForm } from "./ChangeProfileInfo";
 import { IMAGE_API } from "../../../shared/api";
+import { useAppSelector } from "../../../app/store";
+import { useNavigate } from "react-router-dom";
 
 
 export function SettingsWidget() {
     const user = useGetProfileInfo({}).data;
+    const isAuth = useAppSelector(state => state.auth.isAuth);
+    const navigate = useNavigate();
+    
+    if (!isAuth) {
+        navigate('/');
+    }
 
     if (!user) {
         return (<p>Загрузка...</p>)
@@ -33,8 +41,14 @@ export function SettingsWidget() {
             >
                 <ImageUpload imageURL={`${IMAGE_API}/${user.imageURL}`} />
             </div>
-            <ChangeProfileForm user={user} />
-            <ChangePassword />
+            <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100%' }}>
+                <div>
+                    <ChangeProfileForm user={user} />
+                </div>
+                <div>
+                    <ChangePassword />
+                </div>
+            </div>
         </div>
     )
 }

@@ -30,8 +30,13 @@ export function ChangePassword() {
     const formik = useFormik({
         initialValues,
         validationSchema,
-        onSubmit: values => changePassword(values.password)
+        onSubmit: async values => {
+            console.log(values.password);
+            changePassword(values.password);
+        }
     })
+    
+    console.log(formik.values);
 
     return (
         <>
@@ -75,6 +80,10 @@ export function ChangePassword() {
                     loading={metadata.isLoading}
                     variant='outlined'
                     sx={{ alignSelf: 'flex-end' }}
+                    onClick={() => {
+                        console.log('AAAAAAa');
+                        changePassword(formik.values.password);
+                    }}
                 >
                     Изменить
                 </LoadingButton>
