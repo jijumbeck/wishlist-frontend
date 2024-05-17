@@ -220,8 +220,6 @@ export function EditGiftImage({ gift }: { gift: Gift }) {
                         <div>
                             <p>CTRL + V</p>
                             <p>или</p>
-                            <p>Перетащи сюда</p>
-                            <p>или</p>
                             <p>Нажми на плюс</p>
                         </div>
                     )
@@ -237,6 +235,7 @@ function SaveImageButton({ gift, file }: { gift: Gift, file: File }) {
     function handleClick() {
         const formData = new FormData();
         formData.append('giftId', gift.id);
+        formData.append('wishlistId', gift.wishlistId);
         formData.append('giftImage', file);
         uploadImage(formData);
     }
@@ -353,7 +352,7 @@ function GiftURL({
 }) {
 
     const [getUrlGift, metadata] = useGetUrlGift();
-
+    
 
     const URLButton = Object.keys(urlGift).length
         ? (<Button
@@ -374,6 +373,7 @@ function GiftURL({
                         const url = new URL(gift.URL);
                         const response = await getUrlGift(url.href);
                         if ('data' in response) {
+                            console.log(response.data);
                             dispatch(response.data);
                             setUrlGift(response.data);
                         }

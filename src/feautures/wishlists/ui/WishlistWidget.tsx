@@ -1,9 +1,9 @@
 import { createContext, useState } from "react";
-import { Link, useLoaderData } from "react-router-dom";
-import { TextField } from "@mui/material";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { IconButton, TextField, Tooltip } from "@mui/material";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-
-import { useGetWishlistInfo } from "../wishlistAPI";
+import { useDeleteWishlist, useGetWishlistInfo } from "../wishlistAPI";
 import { Wishlist } from "../wishlist.dto";
 import { GiftList } from "../../gifts/ui/GiftList";
 import { ChangeWishlistAccess, ChangeWishlistTitle } from "./WishlistUpdateInfoElements";
@@ -91,7 +91,27 @@ function WishlistTitleInput({ wishlist }: { wishlist: Wishlist }) {
                 }
             </div>
 
+            <DeleteWishlist wishlistId={wishlist.id} />
             <ChangeWishlistAccess wishlist={wishlist} />
         </div>
+    )
+}
+
+function DeleteWishlist({ wishlistId }: { wishlistId: string }) {
+    const [deleteWishlist] = useDeleteWishlist();
+    const navigate = useNavigate();
+
+    return (
+        <Tooltip title="Удалить вишлист">
+            <IconButton
+                sx={{ alignSelf: 'center', margin: '0 30px 0 auto' }}
+                onClick={async () => {
+                    await deleteWishlist(wishlistId);
+                    navigate('..');
+                }}
+            >
+                <DeleteOutlineIcon />
+            </IconButton>
+        </Tooltip>
     )
 }

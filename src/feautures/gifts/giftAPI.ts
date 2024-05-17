@@ -12,8 +12,8 @@ export const giftApi = createApi({
 
         getGift: builder.query<Gift, string>({
             query: (giftId: string) => `gift/${giftId}`,
-            providesTags: (result) => {
-                return [{ type: 'Gift', id: result?.id }]
+            providesTags: (result, error, giftId) => {
+                return [{ type: 'Gift', id: giftId }]
             }
         }),
 
@@ -51,6 +51,11 @@ export const giftApi = createApi({
             }),
             invalidatesTags: (result, error, formData) => {
                 return [{ type: 'Gift', id: formData.get('giftId')?.toString() ?? '' }]
+            },
+            onQueryStarted: async (arg, api) => {
+                await api.queryFulfilled;
+                const wishlistId = arg.get('wishlistId') as unknown as string ?? '';
+                api.dispatch(wishlistAPI.util.invalidateTags([{ type: 'GiftsInWishlist', id: wishlistId }]))
             }
         }),
 

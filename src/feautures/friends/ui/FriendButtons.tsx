@@ -51,7 +51,7 @@ export function FriendButton({ userId }: { userId: string }) {
         return (<AddFriendButton userToAddId={userId} text='Добавить в друзья' />)
     }
 
-    if (friendshipRequest.userIdFirst === userId && friendshipRequest.status === FriendRequestStatus.Subscriber) {
+    if (friendshipRequest.userIdFirst === userId && (friendshipRequest.status === FriendRequestStatus.Subscriber || friendshipRequest.status === FriendRequestStatus.Declined)) {
         return (
             <AddFriendButton userToAddId={userId} text="Добавить в друзья" />
         )

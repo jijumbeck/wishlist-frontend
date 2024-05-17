@@ -8,6 +8,10 @@ import { Wishlist, WishlistAccessType } from "../../wishlists/wishlist.dto";
 import { UserRelationStatusContext } from "../../profile/helpers/useUserRelation";
 import { Gift } from "../gift.dto";
 import { CopyWishlistButton } from "./CopyGiftsButton";
+import { Button } from "@mui/material";
+import { useGetProfileInfo } from "../../profile/profileAPI";
+import { LoadingButton } from "@mui/lab";
+import { useRemoveCoauthor } from "../../wishlists/coauthoringAPI";
 
 
 export function GiftList({ wishlist }: { wishlist: Wishlist }) {
@@ -21,6 +25,11 @@ export function GiftList({ wishlist }: { wishlist: Wishlist }) {
     return (
         <>
             <CopyWishlistButton gifts={gifts ?? []} />
+            {
+                hasRights === 'coauthor'
+                    ? <LeaveCoauthorButton wishlistId={wishlistId} />
+                    : null
+            }
             <div
                 style={{
                     display: 'flex',
@@ -45,5 +54,26 @@ export function GiftList({ wishlist }: { wishlist: Wishlist }) {
             </div>
 
         </>
+    )
+}
+
+function LeaveCoauthorButton({ wishlistId }: { wishlistId: string }) {
+    const user = useGetProfileInfo({}).data;
+    const [leaveCoauthoring, metadata] = useRemoveCoauthor();
+
+    return (
+        <LoadingButton
+            color="error"
+            sx={{ alignSelf: 'flex-end', margin: '15px 0' }}
+            variant="outlined"
+            loading={metadata.isLoading}
+            onClick={() => {
+                if (user && user.id) {
+                    leaveCoauthoring({ coauthorId: user?.id, wishlistId })
+                }
+            }}
+
+        >
+            Покинуть вишлист</LoadingButton>
     )
 }

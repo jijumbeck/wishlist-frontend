@@ -12,11 +12,13 @@ export function useAddGiftRights(wishlist: Wishlist) {
 
     if (user && coauthors) {
         if (wishlist.creatorId === user.id) {
-            return true;
+            return 'creator';
         }
 
-        return coauthors.findIndex(coauthor => coauthor.id === user.id) >= 0;
+        if (coauthors.findIndex(coauthor => coauthor.id === user.id) >= 0) {
+            return 'coauthor';
+        }
     }
 
-    return false;
+    return '';
 }

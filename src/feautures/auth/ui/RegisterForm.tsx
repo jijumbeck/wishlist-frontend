@@ -111,7 +111,7 @@ export function RegisterForm() {
                     backgroundColor: '#bd68c5'
                 }}
             >
-                Войти
+                Зарегистрироваться
             </LoadingButton>
 
             <p style={{ color: '#9a0000' }}>{error}</p>

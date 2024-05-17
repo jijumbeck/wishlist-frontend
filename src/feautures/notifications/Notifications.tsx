@@ -4,12 +4,13 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 import React from "react";
 import { Notification, NotificationType, useGetNotifications } from "./notificationAPI";
-import { useGetUserInfo } from "../profile/profileAPI";
+import { useGetProfileInfo, useGetUserInfo } from "../profile/profileAPI";
 import { useAddCoauthor, useRemoveCoauthor } from "../wishlists/coauthoringAPI";
 import './Notification.css';
 import { Link } from "react-router-dom";
-import { useAddFriend, useDeleteFriend } from "../friends/friendAPI";
+import { useAddFriend, useDeleteFriend, useGetFriends } from "../friends/friendAPI";
 import { useGetWishlistInfo } from "../wishlists/wishlistAPI";
+import { UserInfo } from "../profile/profile.dto";
 
 
 export function Notifications() {
@@ -20,6 +21,7 @@ export function Notifications() {
 
 
 function NotificationsPresenter({ notifications }: { notifications: Notification[] | undefined }) {
+    const user = useGetProfileInfo({}).data;
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -28,6 +30,13 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const birthdaysNotifications = useBirthdayNotifictation({ user });
+
+    const allNotifications = [
+        ...(notifications?.map(notification => <NotificationMenuItem key={`${notification.type} ${notification.requestSenderId}`} notification={notification} />) ?? []),
+        ...birthdaysNotifications
+    ]
 
 
     return (
@@ -39,7 +48,7 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
             >
-                <Badge color="secondary" badgeContent={notifications ? notifications.length : 0} invisible={false}>
+                <Badge color="secondary" badgeContent={allNotifications.length} invisible={false}>
                     <NotificationsIcon />
                 </Badge>
             </IconButton>
@@ -53,8 +62,8 @@ function NotificationsPresenter({ notifications }: { notifications: Notification
                 }}
             >
                 {
-                    notifications && notifications.length > 0
-                        ? notifications.map(notification => <NotificationMenuItem key={`${notification.type} ${notification.requestSenderId}`} notification={notification} />)
+                    allNotifications && allNotifications.length > 0
+                        ? allNotifications
                         : <p>Нет уведомлений.</p>
                 }
             </Menu>
@@ -132,4 +141,43 @@ function CoauthorNotification({ notification }: { notification: Notification }) 
             </IconButton>
         </MenuItem>
     )
+}
+
+function useBirthdayNotifictation({ user }: { user?: UserInfo }) {
+    const friends = useGetFriends(user?.id ?? '').data;
+
+    const birthdays = friends?.filter(friend => {
+        if (!friend.birthdate) {
+            return false;
+        }
+
+        const friendBirthdate = new Date(friend.birthdate);
+
+        const now = new Date();
+        if (now.getMonth() === 11) {
+            now.setFullYear(now.getFullYear() + 1);
+            now.setMonth(0);
+        } else {
+            now.setMonth(now.getMonth() + 1);
+        }
+
+        if (now >= friendBirthdate) {
+            return true;
+        }
+
+        return false;
+    });
+
+
+
+    return birthdays?.map(birthday => {
+        const friendBirthdate = new Date(birthday.birthdate ?? '');
+        return (<MenuItem className="menu__item" key={birthday.id}>
+            <p className="menu__item__text">
+                У вашего друга {birthday.login} день рождения {' '}
+                {friendBirthdate?.getDate() < 10 ? `0${friendBirthdate?.getDate()}` : friendBirthdate?.getDate()}
+                .{friendBirthdate?.getMonth() + 1 < 10 ? `0${friendBirthdate?.getMonth() + 1}` : friendBirthdate?.getMonth() + 1}
+            </p>
+        </MenuItem>)
+    }) ?? []
 }

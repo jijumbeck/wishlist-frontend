@@ -45,6 +45,10 @@ export const reservationApi = createApi({
         getGiftReservations: builder.query<Array<Reservation | GuestReservation>, string>({
             query: (giftId: string) => `reservation/${giftId}`,
             providesTags: (result, error, id) => [{ type: 'Reservation', id }]
+        }),
+
+        getCount: builder.query<number, any>({
+            query: () => ({ url: 'reservation/count' })
         })
 
     })
@@ -52,6 +56,7 @@ export const reservationApi = createApi({
 
 export const useGetReservations = reservationApi.endpoints.getReservations.useQuery;
 export const useGetGiftReservations = reservationApi.endpoints.getGiftReservations.useQuery;
+export const useGetReservationCount = reservationApi.endpoints.getCount.useQuery;
 
 export const useReserveGift = reservationApi.endpoints.reserveGift.useMutation;
 export const useRemoveReservation = reservationApi.endpoints.removeReservation.useMutation;

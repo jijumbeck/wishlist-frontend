@@ -14,11 +14,7 @@ export const wishlistAPI = createApi({
             query: (userId: string) => ({
                 url: `wishlists?ownerId=${userId}`
             }),
-            providesTags: (result) => {
-                return result && result.length > 0
-                    ? [{ type: 'WishlistForUser', id: result[0].creatorId }]
-                    : ['WishlistForUser']
-            }
+            providesTags: (result, error, userId) => [{ type: 'WishlistForUser', id: userId }]
         }),
 
         getPublicWishlists: builder.query<Wishlist[], string>({
@@ -48,7 +44,7 @@ export const wishlistAPI = createApi({
                 method: 'PATCH',
                 body: wishlist
             }),
-            invalidatesTags: (result, error, wishlist) => [{ type: 'Wishlist', id: wishlist.id }]
+            invalidatesTags: (result, error, wishlist) => [{ type: 'Wishlist', id: wishlist.id }, 'WishlistForUser']
         }),
 
         deleteWishlist: builder.mutation<void, string>({
@@ -56,7 +52,7 @@ export const wishlistAPI = createApi({
                 url: `wishlist/${wishlistId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: (result, error, id) => [{ type: 'Wishlist', id: id }]
+            invalidatesTags: (result, error, id) => [{ type: 'Wishlist', id: id }, 'WishlistForUser']
         }),
 
         getWishlistGifts: builder.query<Gift[], string>({
@@ -100,4 +96,5 @@ export const useGetPublicWishlists = wishlistAPI.endpoints.getPublicWishlists.us
 export const useCreateWishlist = wishlistAPI.endpoints.createWishlist.useMutation;
 export const useAddGift = wishlistAPI.endpoints.addGift.useMutation;
 export const useUpdateWishlist = wishlistAPI.endpoints.updateWishlistInfo.useMutation;
+export const useDeleteWishlist = wishlistAPI.endpoints.deleteWishlist.useMutation;
 export const useAddOtherGift = wishlistAPI.endpoints.addOtherGift.useMutation;

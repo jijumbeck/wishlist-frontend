@@ -2,7 +2,8 @@
 export const enum FriendRequestStatus {
     None = "NONE",
     Subscriber = "SUBSCRIBER",
-    Friend = "FRIEND"
+    Friend = "FRIEND",
+    Declined = 'DECLINED'
 }
 
 export interface FriendshipRequest {

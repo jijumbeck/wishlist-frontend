@@ -88,8 +88,6 @@ export function GiftTitle({ gift }: { gift: Gift }) {
 export function GiftCardPage({ gift }: { gift: Gift }) {
     const wishlist = useContext(WishlistContext);
 
-    console.log(wishlist);
-
     return (
         <>
             <div style={{ fontSize: '32px', textAlign: 'start' }}>
